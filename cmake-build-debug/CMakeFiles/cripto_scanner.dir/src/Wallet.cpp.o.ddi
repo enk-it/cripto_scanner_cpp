@@ -1,0 +1,11 @@
+{
+"rules": [
+{
+"primary-output": "CMakeFiles/cripto_scanner.dir/src/Wallet.cpp.o",
+"requires": [
+]
+}
+],
+"version": 0,
+"revision": 0
+}

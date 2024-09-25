@@ -1,0 +1,3 @@
+/home/silencer/CLionProjects/cripto_scanner/cmake-build-debug/CMakeFiles/cripto_scanner.dir
+/home/silencer/CLionProjects/cripto_scanner/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/silencer/CLionProjects/cripto_scanner/cmake-build-debug/CMakeFiles/rebuild_cache.dir
