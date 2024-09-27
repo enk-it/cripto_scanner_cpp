@@ -30,8 +30,7 @@ public:
     ~Scanner();
     Scanner(vector<string> t, int m);
 
-    void updateSymbolBid(string ticker, double best_bid_qty, double best_bid_price);
-    void updateSymbolAsk(string ticker, double best_ask_qty, double best_ask_price);
+    void updateSymbol(string ticker, double best_ask_qty, double best_ask_price , double best_bid_qty, double best_bid_price);
 
     void addSymbol(Symbol* new_symbol);
 

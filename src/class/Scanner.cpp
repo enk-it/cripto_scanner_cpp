@@ -13,12 +13,8 @@ Scanner::Scanner() : maxlen() {}
 Scanner::~Scanner() = default;
 Scanner::Scanner(vector<string> t, int m) : tokens(std::move(t)), maxlen(m) {}
 
-void Scanner::updateSymbolBid(string ticker, double best_bid_qty, double best_bid_price) {
-    this->symbols[ticker]->bestBidQty = best_bid_qty;
-    this->symbols[ticker]->bestAskPrice = best_bid_price;
-}
 
-void Scanner::updateSymbolAsk(string ticker, double best_ask_qty, double best_ask_price) {
+void Scanner::updateSymbol(string ticker, double best_ask_qty, double best_ask_price , double best_bid_qty, double best_bid_price) {
     this->symbols[ticker]->bestAskQty = best_ask_qty;
     this->symbols[ticker]->bestAskPrice = best_ask_price;
 }
