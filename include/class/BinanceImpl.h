@@ -5,10 +5,8 @@
 #ifndef BINANCEIMPL_H
 #define BINANCEIMPL_H
 
-#include "../../include/interface/ICriptoStock.h"
 
-
-class BinanceImpl : public ICriptoStock {
+class BinanceImpl : public BaseCriptoStock {
 };
 
 
