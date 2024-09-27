@@ -23,15 +23,19 @@ protected:
     bool is_stopped=true;
 public:
     explicit ICriptoStock();
-    explicit ICriptoStock(Scanner* s, string n) :
-    scanner(s),
-    stockmarket_name(move(n))
-    {}
-    virtual ~ICriptoStock() = default;  // Виртуальный деструктор
-
+    explicit ICriptoStock(Scanner* s, string n);
+    virtual ~ICriptoStock();  // Виртуальный деструктор
     virtual void init(); // здесь делаем запрос насчёт доступных symbols (symbols), заполняем их, фильтруя по available_tokens. Подключаем websocket.
-
     virtual string get_name();
+    virtual void set_symbols();
+    virtual void trade ();
+    virtual void on_update (
+        string symbol_name,
+        double ask_price,
+        double bid_price,
+        double ask_qty,
+        double bid_qty
+        );
 };
 
 
