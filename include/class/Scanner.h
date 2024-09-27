@@ -2,8 +2,9 @@
 // Created by silencer on 17.09.24.
 //
 
-#ifndef SCANNER_H
-#define SCANNER_H
+#pragma once
+
+
 #include <unordered_map>
 #include <utility>
 #include <vector>
@@ -40,4 +41,3 @@ public:
 
 
 
-#endif //SCANNER_H

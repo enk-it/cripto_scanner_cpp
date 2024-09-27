@@ -2,8 +2,7 @@
 // Created by silencer on 17.09.24.
 //
 
-#ifndef WALLET_H
-#define WALLET_H
+#pragma once
 
 #include <string>
 #include <vector>
@@ -32,4 +31,3 @@ public:
 
 
 
-#endif //WALLET_H

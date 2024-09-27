@@ -2,8 +2,7 @@
 // Created by silencer on 16.09.24.
 //
 
-#ifndef SYMBOL_H
-#define SYMBOL_H
+#pragma once
 
 #include <string>
 #include <vector>
@@ -33,4 +32,3 @@ struct Symbol {
 
 
 
-#endif //SYMBOL_H

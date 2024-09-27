@@ -1,9 +1,8 @@
 //
 // Created by silencer on 17.09.24.
 //
+#pragma once
 
-#ifndef PATHNODE_H
-#define PATHNODE_H
 #include <string>
 #include <vector>
 
@@ -22,4 +21,3 @@ struct PathNode {
     financial_result(fr)
     {}
 };
-#endif //PATHNODE_H

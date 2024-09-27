@@ -1,5 +1,4 @@
-#ifndef ICRIPTOSTOCK_H
-#define ICRIPTOSTOCK_H
+#pragma once
 
 #include <string>
 #include <unordered_map>
@@ -39,4 +38,3 @@ public:
 };
 
 
-#endif //ICRIPTOSTOCK_H

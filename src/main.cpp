@@ -7,7 +7,6 @@
 
 
 
-
 using std::string;
 using std::vector;
 using std::ifstream;
@@ -29,7 +28,6 @@ using nlohmann::json;
 // Подумать над data-race проблемами и асинхронной структурой
 // Класс Symbol должен иметь bids и asks
 
-// перейти в pargma once
 
 void update_symbol_price() {
 

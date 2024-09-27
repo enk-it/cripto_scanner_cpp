@@ -2,8 +2,9 @@
 // Created by silencer on 16.09.24.
 //
 
-#ifndef PATH_H
-#define PATH_H
+#pragma once
+
+
 #include <unordered_map>
 #include <utility>
 #include <vector>
@@ -28,4 +29,3 @@ struct Path {
 };
 
 
-#endif //PATH_H

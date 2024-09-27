@@ -2,8 +2,8 @@
 // Created by silencer on 19.09.24.
 //
 
-#ifndef BINANCEIMPL_H
-#define BINANCEIMPL_H
+#pragma once
+#include "../../include/class/BaseCriptoStock.h"
 
 
 class BinanceImpl : public BaseCriptoStock {
@@ -11,4 +11,3 @@ class BinanceImpl : public BaseCriptoStock {
 
 
 
-#endif //BINANCEIMPL_H
