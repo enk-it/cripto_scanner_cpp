@@ -4,6 +4,7 @@
 #include <ixwebsocket/IXWebSocket.h>
 
 #include "../include/class/Scanner.h"
+#include "../include/class/BinanceImpl.h"
 
 
 
@@ -26,15 +27,16 @@ using nlohmann::json;
 // Учесть разные комиссии на разных биржах
 // Каждая биржа должна иметь класс Wallet, который будет хранить текущие балансы по токенам
 // Подумать над data-race проблемами и асинхронной структурой
-// Класс Symbol должен иметь bids и asks
 
 
 void update_symbol_price() {
+
 
 }
 
 
 int main() {
+    std::cout << "Первая строчка" << std::endl;
     const int maxlen = 6;
     vector<string> allowed_tokens = {
         "BRL",
@@ -61,6 +63,30 @@ int main() {
     };
 
     Scanner scanner = Scanner(allowed_tokens, 6);
+    std::cout << "Инициалилзирован Scanner" << std::endl;
+
+
+    BinanceImpl binance = BinanceImpl();
+    std::cout << "Инициалилзирована binance" << std::endl;
+
+
+    net::io_context ioc;
+
+    net::co_spawn(
+        ioc,
+        binance.init(),
+        [](std::exception_ptr e)
+        {
+            if(e)
+                std::rethrow_exception(e);
+        });
+
+    std::cout << "Заспанены корутины" << std::endl;
+
+
+    ioc.run();
+
+    std::cout << "После ioc.run()" << std::endl;
 
 
 
