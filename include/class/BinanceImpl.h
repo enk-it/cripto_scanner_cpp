@@ -24,16 +24,16 @@ namespace ssl = boost::asio::ssl;
 
 class BinanceImpl : public BaseCriptoStock {
 protected:
-    std::unique_ptr<websocket::stream<beast::ssl_stream<beast::tcp_stream>>> ws;  // Хранение в умном указателе
-    std::unique_ptr<ssl::context> ctx;  // Также храним SSL-контекст в поле класса
+    websocket::stream<beast::ssl_stream<beast::tcp_stream>>* ws = nullptr;  // Хранение в умном указателе
+    ssl::context* ctx = nullptr;  // Также храним SSL-контекст в поле класса
 
     net::awaitable<void> subscribe();
     net::awaitable<void> connect_stream_websocket(
         string host,
         string port,
         string target,
-        std::unique_ptr<websocket::stream<beast::ssl_stream<beast::tcp_stream>>> &ws,
-        std::unique_ptr<ssl::context> &ctx
+        websocket::stream<beast::ssl_stream<beast::tcp_stream>> **ws,
+        ssl::context **ctx
         );
     net::awaitable<void> send_stream_message(string message);
     net::awaitable<void> read_stream_message();
