@@ -1,7 +1,6 @@
 #include <iostream>
 #include <unordered_set>
 #include <nlohmann/json.hpp>
-#include <ixwebsocket/IXWebSocket.h>
 
 #include "../include/class/Scanner.h"
 #include "../include/class/BinanceImpl.h"
@@ -15,7 +14,6 @@ using std::unordered_set;
 using std::unordered_map;
 using std::cout;
 using std::endl;
-using ix::WebSocket;
 using nlohmann::json;
 
 

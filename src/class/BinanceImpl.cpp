@@ -6,28 +6,29 @@
 
 #include <iostream>
 
-
-net::awaitable<void> BinanceImpl::connect_stream_websocket() {
-    const string host = "stream.binance.com";
-    const string port = "443";
-
-
+net::awaitable<void> BinanceImpl::connect_stream_websocket(
+        const string host,
+        const string port,
+        const string target,
+        std::unique_ptr<websocket::stream<beast::ssl_stream<beast::tcp_stream>>> &ws,
+        std::unique_ptr<ssl::context> &ctx
+        ){
     auto executor = co_await net::this_coro::executor;
     auto resolver = net::ip::tcp::resolver{ executor };
 
-    this->ctx = std::make_unique<ssl::context>(ssl::context::tlsv12_client);
-    this->ctx->set_default_verify_paths();
-    this->ctx->set_verify_mode(ssl::verify_peer);
-    this->ws = std::make_unique<websocket::stream<beast::ssl_stream<beast::tcp_stream>>>(executor, *ctx);
+    ctx = std::make_unique<ssl::context>(ssl::context::tlsv12_client);
+    ctx->set_default_verify_paths();
+    ctx->set_verify_mode(ssl::verify_peer);
+    ws = std::make_unique<websocket::stream<beast::ssl_stream<beast::tcp_stream>>>(executor, *ctx);
 
 
     auto const results = co_await resolver.async_resolve(host, port);
 
-    get_lowest_layer(*this->ws).expires_after(std::chrono::seconds(30));
+    get_lowest_layer(*ws).expires_after(std::chrono::seconds(30));
 
-    auto ep = co_await get_lowest_layer(*this->ws).async_connect(results);
+    auto ep = co_await get_lowest_layer(*ws).async_connect(results);
 
-    if(!SSL_set_tlsext_host_name(this->ws->next_layer().native_handle(), host.c_str()))
+    if(!SSL_set_tlsext_host_name(ws->next_layer().native_handle(), host.c_str()))
         throw beast::system_error(
             beast::error_code(
                 static_cast<int>(::ERR_get_error()),
@@ -36,12 +37,12 @@ net::awaitable<void> BinanceImpl::connect_stream_websocket() {
 
     std::string full_host = host + ':' + std::to_string(ep.port());
 
-    get_lowest_layer(*this->ws).expires_never();
+    get_lowest_layer(*ws).expires_never();
 
-    this->ws->set_option(
+    ws->set_option(
         websocket::stream_base::timeout::suggested(beast::role_type::client));
 
-    this->ws->set_option(websocket::stream_base::decorator(
+    ws->set_option(websocket::stream_base::decorator(
         [](websocket::request_type& req)
         {
             req.set(http::field::user_agent,
@@ -49,8 +50,8 @@ net::awaitable<void> BinanceImpl::connect_stream_websocket() {
                     " websocket-client-coro");
         }));
 
-    co_await this->ws->next_layer().async_handshake(ssl::stream_base::client);
-    co_await this->ws->async_handshake(full_host, "/ws");
+    co_await ws->next_layer().async_handshake(ssl::stream_base::client);
+    co_await ws->async_handshake(full_host, target);
 
 }
 
@@ -108,7 +109,7 @@ BinanceImpl::BinanceImpl(Scanner* scanner) {
 net::awaitable<void> BinanceImpl::init() {
     std::cout << "Внутри init()" << std::endl;
 
-    co_await this->connect_stream_websocket();
+    co_await this->connect_stream_websocket("stream.binance.com", "443", "/ws", this->ws, this->ctx);
     std::cout << "После connect()" << std::endl;
 
     // co_await this->get_symbols_info();
