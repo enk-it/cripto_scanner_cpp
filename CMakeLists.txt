@@ -17,7 +17,7 @@ find_package(Threads REQUIRED)
 
 
 add_executable(cripto_scanner src/main.cpp
-        include/interface/ICriptoStock.h
+#        old_src/interface/ICriptoStock.h
         include/structure/Symbol.h
         include/structure/Path.h
         src/class/Scanner.cpp
@@ -31,6 +31,8 @@ add_executable(cripto_scanner src/main.cpp
         include/class/OkxImpl.h
         src/class/OkxImpl.cpp
         src/class/BaseCriptoStock.cpp
+        include/utils/shared.h
+        src/utils/shared.cpp
 )
 
 target_include_directories(cripto_scanner PRIVATE ${Boost_INCLUDE_DIRS} ${OPENSSL_INCLUDE_DIR})

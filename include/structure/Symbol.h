@@ -7,6 +7,7 @@
 #include <string>
 #include <vector>
 
+class BaseCriptoStock;
 using std::string;
 using std::vector;
 
@@ -25,7 +26,7 @@ struct Symbol {
     double bestAskQty;
 
     vector<PathNode*> participates;
-    ICriptoStock* criptostock;
+    BaseCriptoStock* criptostock;
 
     Symbol();
 };

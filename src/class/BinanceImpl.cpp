@@ -7,7 +7,7 @@
 #include <iostream>
 
 
-net::awaitable<void> BinanceImpl::connect_websocket() {
+net::awaitable<void> BinanceImpl::connect_stream_websocket() {
     const string host = "stream.binance.com";
     const string port = "443";
 
@@ -16,10 +16,8 @@ net::awaitable<void> BinanceImpl::connect_websocket() {
     auto resolver = net::ip::tcp::resolver{ executor };
 
     this->ctx = std::make_unique<ssl::context>(ssl::context::tlsv12_client);
-
     this->ctx->set_default_verify_paths();
     this->ctx->set_verify_mode(ssl::verify_peer);
-
     this->ws = std::make_unique<websocket::stream<beast::ssl_stream<beast::tcp_stream>>>(executor, *ctx);
 
 
@@ -51,14 +49,13 @@ net::awaitable<void> BinanceImpl::connect_websocket() {
                     " websocket-client-coro");
         }));
 
-    // Perform the SSL handshake
     co_await this->ws->next_layer().async_handshake(ssl::stream_base::client);
-    // Perform the websocket handshake
     co_await this->ws->async_handshake(full_host, "/ws");
+
 }
 
 
-net::awaitable<void> BinanceImpl::send_message(string message) {
+net::awaitable<void> BinanceImpl::send_stream_message(string message) {
     std::cout << "В начале send_message()" << std::endl;
 
     co_await this->ws->async_write(net::buffer(message));
@@ -68,24 +65,36 @@ net::awaitable<void> BinanceImpl::send_message(string message) {
 }
 
 
-net::awaitable<void> BinanceImpl::read_message() {
+net::awaitable<void> BinanceImpl::read_stream_message() {
     std::cout << "Вначале read_message()" << std::endl;
     beast::flat_buffer buffer;
     while (true) {
         std::cout << "Внутри read_message()" << std::endl;
         buffer.consume(buffer.size());
         co_await this->ws->async_read(buffer);
-        std::cout << beast::make_printable(buffer.data()) << std::endl;
+        string temp = beast::buffers_to_string(buffer.data());
+        std::cout << temp << std::endl;
     }
     std::cout << "В конце read_message()" << std::endl;
 
 }
 
+
 net::awaitable<void> BinanceImpl::subscribe() {
     std::cout << "В начале subscribe()" << std::endl;
 
-    co_await this->send_message(R"({"method":"SUBSCRIBE","params":["btcusdt@bookTicker"],"id":1727536128794})");
+    co_await this->send_stream_message(R"({"method":"SUBSCRIBE","params":["btcusdt@bookTicker", "bnbeth@bookTicker"],"id":1727536128794})");
     std::cout << "В конце subscribe()" << std::endl;
+
+
+}
+
+
+net::awaitable<void> BinanceImpl::get_symbols_info() {
+    std::cout << "В начале get_symbols_info()" << std::endl;
+    co_await this->send_stream_message(R"({"id":"5494febb-d167-46a2-996d-70533eb4d976","method":"exchangeInfo","params":{}})");
+
+    std::cout << "В конце get_symbols_info()" << std::endl;
 
 
 }
@@ -99,13 +108,16 @@ BinanceImpl::BinanceImpl(Scanner* scanner) {
 net::awaitable<void> BinanceImpl::init() {
     std::cout << "Внутри init()" << std::endl;
 
-    co_await this->connect_websocket();
+    co_await this->connect_stream_websocket();
     std::cout << "После connect()" << std::endl;
+
+    // co_await this->get_symbols_info();
+    // std::cout << "После get_symbols_info()" << std::endl;
 
     co_await this->subscribe();
     std::cout << "После subscribe()" << std::endl;
 
-    co_await this->read_message();
+    co_await this->read_stream_message();
     std::cout << "После read_message()" << std::endl;
 
 }

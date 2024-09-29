@@ -27,9 +27,10 @@ protected:
     std::unique_ptr<ssl::context> ctx;  // Также храним SSL-контекст в поле класса
 
     net::awaitable<void> subscribe();
-    net::awaitable<void> connect_websocket();
-    net::awaitable<void> send_message(string message);
-    net::awaitable<void> read_message();
+    net::awaitable<void> connect_stream_websocket();
+    net::awaitable<void> send_stream_message(string message);
+    net::awaitable<void> read_stream_message();
+    net::awaitable<void> get_symbols_info();
 
 public:
     BinanceImpl();

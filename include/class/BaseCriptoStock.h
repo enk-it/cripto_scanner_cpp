@@ -25,7 +25,6 @@ class BaseCriptoStock {
 protected:
     Scanner* scanner;
     string stockmarket_name;
-    vector<Symbol> symbols;
     bool is_stopped=true;
 public:
     BaseCriptoStock();  // Виртуальный деструктор

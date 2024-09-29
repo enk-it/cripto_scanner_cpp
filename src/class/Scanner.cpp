@@ -3,10 +3,10 @@
 //
 
 #include "../../include/class/Scanner.h"
+#include "../../include/class/BaseCriptoStock.h"
 
 #include <iostream>
 
-#include "../../include/interface/ICriptoStock.h"
 
 
 Scanner::Scanner() : maxlen() {}
