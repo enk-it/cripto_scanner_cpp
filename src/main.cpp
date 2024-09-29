@@ -6,7 +6,6 @@
 #include "../include/class/BinanceImpl.h"
 
 
-
 using std::string;
 using std::vector;
 using std::ifstream;
@@ -28,8 +27,6 @@ using nlohmann::json;
 
 
 void update_symbol_price() {
-
-
 }
 
 
@@ -60,33 +57,36 @@ int main() {
         "EUR",
     };
 
-    Scanner scanner = Scanner(allowed_tokens, 6);
+    Scanner *scanner = new Scanner(allowed_tokens, 6);
     std::cout << "Инициалилзирован Scanner" << std::endl;
 
 
-    BinanceImpl binance = BinanceImpl();
+    BinanceImpl binance = BinanceImpl(scanner, "binance");
     std::cout << "Инициалилзирована binance" << std::endl;
-
 
     net::io_context ioc;
 
     net::co_spawn(
         ioc,
-        binance.init(),
-        [](std::exception_ptr e)
-        {
-            if(e)
+        binance.init_stream_ws(),
+        [](std::exception_ptr e) {
+            if (e)
+                std::rethrow_exception(e);
+        });
+
+    net::co_spawn(
+        ioc,
+        binance.init_api_ws(),
+        [](std::exception_ptr e) {
+            if (e)
                 std::rethrow_exception(e);
         });
 
     std::cout << "Заспанены корутины" << std::endl;
 
-
     ioc.run();
 
     std::cout << "После ioc.run()" << std::endl;
-
-
 
     return 0;
 }

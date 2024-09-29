@@ -10,14 +10,13 @@ set(CMAKE_CXX_COMPILER clang++)
 include(CheckCXXCompilerFlag)
 
 
-
 find_package(Boost REQUIRED COMPONENTS system)
 find_package(OpenSSL REQUIRED)
 find_package(Threads REQUIRED)
 
 
 add_executable(cripto_scanner src/main.cpp
-#        old_src/interface/ICriptoStock.h
+        #        old_src/interface/ICriptoStock.h
         include/structure/Symbol.h
         include/structure/Path.h
         src/class/Scanner.cpp
@@ -33,6 +32,7 @@ add_executable(cripto_scanner src/main.cpp
         src/class/BaseCriptoStock.cpp
         include/utils/shared.h
         src/utils/shared.cpp
+        src/structure/Symbol.cpp
 )
 
 target_include_directories(cripto_scanner PRIVATE ${Boost_INCLUDE_DIRS} ${OPENSSL_INCLUDE_DIR})
@@ -45,7 +45,7 @@ target_link_libraries(cripto_scanner
 )
 
 # If you're on a Unix-like system, you might also need to link against the realtime library
-if(UNIX AND NOT APPLE)
+if (UNIX AND NOT APPLE)
     target_link_libraries(cripto_scanner PRIVATE rt)
-endif()
+endif ()
 

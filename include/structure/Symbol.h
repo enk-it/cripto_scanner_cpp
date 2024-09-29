@@ -25,11 +25,8 @@ struct Symbol {
     double bestBidQty;
     double bestAskQty;
 
-    vector<PathNode*> participates;
-    BaseCriptoStock* criptostock;
+    vector<PathNode *> participates;
+    BaseCriptoStock *criptostock;
 
     Symbol();
 };
-
-
-
