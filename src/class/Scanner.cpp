@@ -158,7 +158,9 @@ void Scanner::generate_paths() {
         &maxlen
     );
 
+
     this->print_paths();
+
 
 }
 
