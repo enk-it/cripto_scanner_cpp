@@ -23,8 +23,7 @@ void Scanner::update_symbol(string ticker, double best_ask_qty, double best_ask_
     this->symbols[ticker]->bestAskPrice = best_ask_price;
 }
 
-void Scanner::add_symbol(Symbol *new_symbol, string ticker) {
-    // string ticker = new_symbol->criptostock->get_name() + new_symbol->symbol;
+void Scanner::add_symbol(Symbol *new_symbol, const string& ticker) {
     this->symbols[ticker] = new_symbol;
 }
 

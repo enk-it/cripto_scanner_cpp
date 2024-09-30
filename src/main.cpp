@@ -58,11 +58,8 @@ int main() {
     };
 
     Scanner *scanner = new Scanner(allowed_tokens, 6);
-    std::cout << "Инициалилзирован Scanner" << std::endl;
-
 
     BinanceImpl binance = BinanceImpl(scanner, "binance");
-    std::cout << "Инициалилзирована binance" << std::endl;
 
     net::io_context ioc;
 
@@ -82,11 +79,9 @@ int main() {
                 std::rethrow_exception(e);
         });
 
-    std::cout << "Заспанены корутины" << std::endl;
 
     ioc.run();
 
-    std::cout << "После ioc.run()" << std::endl;
 
     return 0;
 }
