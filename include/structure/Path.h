@@ -21,7 +21,7 @@ struct Path {
     double financial_result;
     vector<PathNode*> path;
 
-    Path();
+    Path() = default;
     Path(
         double fr,
         vector<PathNode*> p
