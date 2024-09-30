@@ -54,6 +54,10 @@ public:
     net::awaitable<void> init_stream_ws();
 
     net::awaitable<void> init_api_ws();
+
+    net::awaitable<void> init();
+
+
 };
 
 
