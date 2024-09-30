@@ -4,8 +4,12 @@
 
 #include "../../include/class/Scanner.h"
 #include "../../include/class/BaseCriptoStock.h"
+#include "../../include/structure/PathNode.h"
+#include "../../include/structure/Path.h"
+#include "../../include/utils/shared.h"
 
 #include <iostream>
+#include <unordered_set>
 
 
 Scanner::Scanner() : maxlen() {
@@ -17,10 +21,12 @@ Scanner::Scanner(vector<string> t, int m) : tokens(std::move(t)), maxlen(m) {
 }
 
 
-void Scanner::update_symbol(string ticker, double best_ask_qty, double best_ask_price, double best_bid_qty,
+void Scanner::update_symbol(const string& ticker, double best_ask_qty, double best_ask_price, double best_bid_qty,
                             double best_bid_price) {
     this->symbols[ticker]->bestAskQty = best_ask_qty;
     this->symbols[ticker]->bestAskPrice = best_ask_price;
+    this->symbols[ticker]->bestBidQty = best_bid_qty;
+    this->symbols[ticker]->bestBidPrice = best_bid_price;
 }
 
 void Scanner::add_symbol(Symbol *new_symbol, const string& ticker) {
@@ -49,3 +55,121 @@ void Scanner::print_symbols() {
         std::cout << kv.second << std::endl;
     }
 }
+
+
+void Scanner::_generate_paths(
+    const string* start_token,
+    const string* current_token,
+    const vector<Symbol*>* symbols_vec,
+    std::unordered_set<string>* history_set,
+    vector<PathNode*>* history,
+    vector<Path>* paths,
+    const int* maxlen
+    )
+{
+    if (!history->empty() && *start_token == *current_token) {
+        double financial_result = count_fr(0.999f, history->size());
+
+
+        Path *new_path = new Path;
+
+        new_path->financial_result = financial_result;
+        new_path->path = *history;
+
+        paths->push_back(*new_path);
+
+        return;
+    }
+    if (history_set->size() >= *maxlen) {
+        return;
+    }
+
+    for (const auto& symbol : *symbols_vec) {
+        if (history_set->contains(symbol->symbol)) {
+            continue;
+        }
+        if (symbol->base != *current_token && symbol->quote != *current_token) {
+            continue;
+        }
+        string new_token;
+        PathNode* new_path_node = new PathNode();
+        new_path_node->symbol = symbol;
+
+        if (symbol->base == *current_token) {
+            new_token = symbol->quote;
+            new_path_node->is_reversed = false;
+        } else {
+            new_token = symbol->base;
+            new_path_node->is_reversed = true;
+        }
+
+        if (new_token != *start_token && history_set->contains(new_token)) {
+            history->pop_back();
+            continue;
+        }
+
+        history->push_back(new_path_node);
+        history_set->insert(symbol->symbol);
+
+        // proceed
+
+        _generate_paths(
+            start_token,
+            &new_token,
+            symbols_vec,
+            history_set,
+            history,
+            paths,
+            maxlen
+            );
+
+        history->pop_back();
+        history_set->erase(symbol->symbol);
+    }
+}
+
+
+void Scanner::_vectorize_symbols() {
+    int i = 0;
+    for (const auto&[fst, snd]: this->symbols) {
+        this->symbols_vec.push_back(snd);
+        i++;
+    }
+}
+
+
+void Scanner::generate_paths() {
+    const int maxlen = 5;
+
+    this->_vectorize_symbols();
+
+    std::unordered_set<string> history_set;
+    vector<PathNode*> history;
+
+    const string start_token = "USDT";
+
+    this->_generate_paths(
+        &start_token,
+        &start_token,
+        &this->symbols_vec,
+        &history_set,
+        &history,
+        &this->paths,
+        &maxlen
+    );
+
+    this->print_paths();
+
+}
+
+
+void Scanner::print_paths() {
+    for (int j = 0; j < this->paths.size(); j++) {
+        std::cout << "--------------------" << std::endl;
+        std::cout << this->paths[j].financial_result << std::endl;
+        for (int i = 0; i<this->paths[j].path.size(); i++) {
+            std::cout << this->paths[j].path[i]->symbol->symbol << std::endl;
+        }
+    }
+}
+
