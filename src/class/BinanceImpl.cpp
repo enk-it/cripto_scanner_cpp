@@ -151,3 +151,9 @@ net::awaitable<void> BinanceImpl::init_api_ws() {
     this->scanner->print_symbols();
 }
 
+net::awaitable<void> BinanceImpl::init() {
+    co_await this->init_api_ws();
+    this->scanner->generate_paths();
+    // co_await this->init_stream_ws();
+}
+
