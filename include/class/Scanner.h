@@ -33,11 +33,8 @@ protected:
     void _generate_paths(
         const string* start_token,
         const string* current_token,
-        const vector<Symbol*>* symbols_vec,
         std::unordered_set<string>* history_set,
-        vector<PathNode*>* history,
-        vector<Path>* paths,
-        const int* maxlen
+        vector<PathNode*>* history
         );
 
     void _vectorize_symbols();

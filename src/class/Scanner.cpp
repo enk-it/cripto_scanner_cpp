@@ -60,11 +60,8 @@ void Scanner::print_symbols() {
 void Scanner::_generate_paths(
     const string* start_token,
     const string* current_token,
-    const vector<Symbol*>* symbols_vec,
     std::unordered_set<string>* history_set,
-    vector<PathNode*>* history,
-    vector<Path>* paths,
-    const int* maxlen
+    vector<PathNode*>* history
     )
 {
     if (!history->empty() && *start_token == *current_token) {
@@ -76,15 +73,15 @@ void Scanner::_generate_paths(
         new_path->financial_result = financial_result;
         new_path->path = *history;
 
-        paths->push_back(*new_path);
+        this->paths.push_back(*new_path);
 
         return;
     }
-    if (history_set->size() >= *maxlen) {
+    if (history_set->size() >= this->maxlen) {
         return;
     }
 
-    for (const auto& symbol : *symbols_vec) {
+    for (const auto& symbol : this->symbols_vec) {
         if (history_set->contains(symbol->symbol)) {
             continue;
         }
@@ -116,11 +113,8 @@ void Scanner::_generate_paths(
         _generate_paths(
             start_token,
             &new_token,
-            symbols_vec,
             history_set,
-            history,
-            paths,
-            maxlen
+            history
             );
 
         history->pop_back();
@@ -139,8 +133,6 @@ void Scanner::_vectorize_symbols() {
 
 
 void Scanner::generate_paths() {
-    const int maxlen = 5;
-
     this->_vectorize_symbols();
 
     std::unordered_set<string> history_set;
@@ -151,15 +143,9 @@ void Scanner::generate_paths() {
     this->_generate_paths(
         &start_token,
         &start_token,
-        &this->symbols_vec,
         &history_set,
-        &history,
-        &this->paths,
-        &maxlen
+        &history
     );
-
-
-    this->print_paths();
 
 
 }
@@ -173,5 +159,6 @@ void Scanner::print_paths() {
             std::cout << this->paths[j].path[i]->symbol->symbol << std::endl;
         }
     }
+    std::cout << this->paths.size() << std::endl;
 }
 

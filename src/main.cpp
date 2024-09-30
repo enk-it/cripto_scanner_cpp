@@ -57,7 +57,7 @@ int main() {
         "EUR",
     };
 
-    Scanner *scanner = new Scanner(allowed_tokens, 6);
+    Scanner *scanner = new Scanner(allowed_tokens, 3);
 
     BinanceImpl binance = BinanceImpl(scanner, "binance");
 
