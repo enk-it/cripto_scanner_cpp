@@ -95,6 +95,10 @@ net::awaitable<void> BinanceImpl::read_api_message() {
         std::string sym = jsonData["result"]["symbols"][i]["symbol"].get<std::string>();
         std::string baseAsset = jsonData["result"]["symbols"][i]["baseAsset"].get<std::string>();
         std::string quoteAsset = jsonData["result"]["symbols"][i]["quoteAsset"].get<std::string>();
+        std::string status = jsonData["result"]["symbols"][i]["status"].get<std::string>();
+        if (status != "TRADING") {
+            continue;
+        }
         if (this->scanner->is_allowed_token(baseAsset) && this->scanner->is_allowed_token(quoteAsset)) {
             Symbol *symbol_ = new Symbol;
             symbol_->symbol = sym;
