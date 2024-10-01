@@ -80,6 +80,41 @@ net::awaitable<void> BinanceImpl::read_stream_message()
         buffer.consume(buffer.size());
         co_await this->stream_ws->async_read(buffer);
         string temp = beast::buffers_to_string(buffer.data());
+        nlohmann::json jsonData;
+        jsonData = nlohmann::json::parse(temp);
+
+        // std::cout << temp << std::endl;
+
+        if (this->is_stopped) {
+            continue;
+        }
+
+        if (!jsonData.contains("result")) {
+            int timestamp = jsonData["u"].get<int>();
+            std::string symbol_name = jsonData["s"].get<std::string>();
+            double bid_price = std::stod(jsonData["b"].get<std::string>());
+            double bid_qty = std::stod(jsonData["B"].get<std::string>());
+            double ask_price = std::stod(jsonData["a"].get<std::string>());
+            double ask_qty = std::stod(jsonData["A"].get<std::string>());
+            this->scanner->update_symbol(
+                this->stockmarket_name + symbol_name,
+                ask_qty,
+                ask_price,
+                bid_qty,
+                bid_price
+            );
+            //--------------------DEBUG-------------------------
+            // std::cout << s << ' ' <<
+            // std::format("{}", b) << ' ' <<
+            // std::format("{}", B) << ' ' <<
+            // std::format("{}", a) << ' ' <<
+            // std::format("{}", A) << ' ' << std::endl;
+            //--------------------DEBUG-------------------------
+        }
+        else {
+            std::cout << "Статус подписки на стрим" << std::endl;
+        }
+
     }
 }
 
@@ -107,10 +142,14 @@ net::awaitable<void> BinanceImpl::read_api_message() {
             this->scanner->add_symbol(symbol_, this->get_name() + sym);
         }
     }
+
+    this->is_stopped = false;
 }
 
 
 net::awaitable<void> BinanceImpl::subscribe() {
+    //TODO:  subscribe to all the symbols available
+    //TODO:  use json schema instead of hardcoded value
     co_await this->send_message(
         R"({"method":"SUBSCRIBE","params":["btcusdt@bookTicker", "bnbeth@bookTicker"],"id":1727536128794})",
         *this->stream_ws);
@@ -118,6 +157,8 @@ net::awaitable<void> BinanceImpl::subscribe() {
 
 
 net::awaitable<void> BinanceImpl::get_symbols_info() {
+    //TODO:  use json schema instead of hardcoded value
+
     co_await this->send_message(
         R"({"id":"5494febb-d167-46a2-996d-70533eb4d976","method":"exchangeInfo","params":{}})",
         *this->api_ws);
@@ -136,13 +177,12 @@ net::awaitable<void> BinanceImpl::init_api_ws() {
     co_await this->get_symbols_info();
     co_await this->read_api_message();
 
-    this->scanner->print_symbols();
+    this->scanner->generate_paths();
+    this->scanner->print_paths();
+
 }
 
 net::awaitable<void> BinanceImpl::init() {
     co_await this->init_api_ws();
-    this->scanner->generate_paths();
-    this->scanner->print_paths();
-
 }
 

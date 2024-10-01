@@ -3,6 +3,9 @@
 //
 
 #include "../../include/class/Scanner.h"
+
+#include <format>
+
 #include "../../include/class/BaseCriptoStock.h"
 #include "../../include/structure/PathNode.h"
 #include "../../include/structure/Path.h"
@@ -27,6 +30,9 @@ void Scanner::update_symbol(const string& ticker, double best_ask_qty, double be
     this->symbols[ticker]->bestAskPrice = best_ask_price;
     this->symbols[ticker]->bestBidQty = best_bid_qty;
     this->symbols[ticker]->bestBidPrice = best_bid_price;
+    this->print_symbols_details();
+    // naive version
+    // TODO: implement rolling-window update, in ordered to effectively update path's fr's
 }
 
 void Scanner::add_symbol(Symbol *new_symbol, const string& ticker) {
@@ -100,15 +106,13 @@ void Scanner::_generate_paths(
             new_path_node->is_reversed = true;
         }
 
-        if (new_token != *start_token && history_set->contains(new_token)) {
+        if (new_token != *start_token) {
             history->pop_back();
             continue;
         }
 
         history->push_back(new_path_node);
         history_set->insert(symbol->symbol);
-
-        // proceed
 
         _generate_paths(
             start_token,
@@ -124,11 +128,22 @@ void Scanner::_generate_paths(
 
 
 void Scanner::_vectorize_symbols() {
-    int i = 0;
     for (const auto&[fst, snd]: this->symbols) {
         this->symbols_vec.push_back(snd);
-        i++;
     }
+}
+
+
+void Scanner::print_symbols_details() {
+
+    system("clear");
+    for (const auto&[fst, snd]: this->symbols) {
+        std::cout << snd->symbol << " ";
+        std::cout << std::format("{}", snd->bestAskPrice) << " ";
+        std::cout << std::format("{}", snd->bestBidPrice);
+        std::cout << std::endl;
+    }
+
 }
 
 

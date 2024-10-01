@@ -35,6 +35,7 @@ add_executable(cripto_scanner src/main.cpp
         include/utils/shared.h
         src/utils/shared.cpp
         src/structure/Symbol.cpp
+        include/request/subscribe.h
 )
 
 target_include_directories(cripto_scanner PRIVATE ${Boost_INCLUDE_DIRS} ${OPENSSL_INCLUDE_DIR})

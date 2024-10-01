@@ -28,6 +28,7 @@ protected:
 
     vector<Path> paths;
 
+
     int maxlen;
 
     void _generate_paths(
@@ -60,6 +61,8 @@ public:
     void generate_paths();
 
     void print_paths();
+
+    void print_symbols_details();
 
 };
 

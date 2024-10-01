@@ -28,6 +28,8 @@ protected:
     websocket::stream<beast::ssl_stream<beast::tcp_stream> > *api_ws = nullptr;
     ssl::context *ctx = nullptr; // Также храним SSL-контекст в поле класса
 
+    bool is_stopped = true;
+
     net::awaitable<void> subscribe();
 
     net::awaitable<void> connect_websocket(

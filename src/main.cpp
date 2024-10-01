@@ -63,17 +63,17 @@ int main() {
 
     net::io_context ioc;
 
-    // net::co_spawn(
-    //     ioc,
-    //     binance.init_stream_ws(),
-    //     [](std::exception_ptr e) {
-    //         if (e)
-    //             std::rethrow_exception(e);
-    //     });
+    net::co_spawn(
+        ioc,
+        binance.init_stream_ws(),
+        [](std::exception_ptr e) {
+            if (e)
+                std::rethrow_exception(e);
+        });
 
     net::co_spawn(
         ioc,
-        binance.init(),
+        binance.init_api_ws(),
         [](std::exception_ptr e) {
             if (e)
                 std::rethrow_exception(e);

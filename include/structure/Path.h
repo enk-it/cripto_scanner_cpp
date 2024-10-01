@@ -25,7 +25,7 @@ struct Path {
     Path(
         double fr,
         vector<PathNode*> p
-        ) : financial_result(fr), path(move(p)) {}
+        ) : financial_result(fr), path(std::move(p)) {}
 };
 
 
