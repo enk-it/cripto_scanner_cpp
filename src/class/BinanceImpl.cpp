@@ -3,9 +3,11 @@
 //
 
 #include "../../include/class/BinanceImpl.h"
+#include "../../include/utils/request.h"
 
 #include <iostream>
 #include <nlohmann/json.hpp>
+using namespace std::chrono_literals;
 
 
 BinanceImpl::BinanceImpl() = default;
@@ -140,6 +142,7 @@ net::awaitable<void> BinanceImpl::read_api_message() {
             symbol_->base = baseAsset;
             symbol_->quote = quoteAsset;
             this->scanner->add_symbol(symbol_, this->get_name() + sym);
+            this->symbols_names.push_back(sym);
         }
     }
 
@@ -148,20 +151,28 @@ net::awaitable<void> BinanceImpl::read_api_message() {
 
 
 net::awaitable<void> BinanceImpl::subscribe() {
-    //TODO:  subscribe to all the symbols available
-    //TODO:  use json schema instead of hardcoded value
-    co_await this->send_message(
-        R"({"method":"SUBSCRIBE","params":["btcusdt@bookTicker", "bnbeth@bookTicker"],"id":1727536128794})",
-        *this->stream_ws);
+    auto executor = co_await net::this_coro::executor;
+    net::steady_timer timer(executor);
+
+    while (this->is_stopped) {
+        timer.expires_after(100ms);  // Устанавливаем таймер на 100 мс
+        co_await timer.async_wait(
+            boost::asio::use_awaitable);  // Асинхронно ждем 100 мс
+    }
+
+    string request = subscribe_request(this->symbols_names);
+    co_await this->send_message(request, *this->stream_ws);
 }
 
 
 net::awaitable<void> BinanceImpl::get_symbols_info() {
-    //TODO:  use json schema instead of hardcoded value
+    string request = exchange_request();
 
     co_await this->send_message(
-        R"({"id":"5494febb-d167-46a2-996d-70533eb4d976","method":"exchangeInfo","params":{}})",
+        request,
         *this->api_ws);
+
+
 }
 
 
