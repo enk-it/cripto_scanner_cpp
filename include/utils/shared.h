@@ -9,7 +9,6 @@
 
 std::string get_uuid();
 
-double count_fr(double comission_k,
-                int n);
+double count_fr(int n, double comission_k = 0.999);
 
 #endif //SHARED_H

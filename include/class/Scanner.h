@@ -24,21 +24,20 @@ class Scanner {
 protected:
     vector<string> tokens;
     unordered_map<string, Symbol *> symbols;
-    vector<Symbol *> symbols_vec;
+
+    // Key - Token; Values - Vector with Symbols with key Token
+    unordered_map<string, vector<Symbol *> > sorted_symbols;
 
     vector<Path> paths;
-
 
     int maxlen;
 
     void _generate_paths(
-        const string* start_token,
-        const string* current_token,
-        std::unordered_set<string>* history_set,
-        vector<PathNode*>* history
-        );
-
-    void _vectorize_symbols();
+        const string &start_token,
+        const string *current_token,
+        vector<Symbol *> &history,
+        vector<PathNode *> *history_nodes
+    );
 
 public:
     Scanner();
@@ -47,10 +46,10 @@ public:
 
     Scanner(vector<string> t, int m);
 
-    void update_symbol(const string& ticker, double best_ask_qty, double best_ask_price, double best_bid_qty,
+    void update_symbol(const string &ticker, double best_ask_qty, double best_ask_price, double best_bid_qty,
                        double best_bid_price);
 
-    void add_symbol(Symbol *new_symbol, const string& ticker);
+    void add_symbol(Symbol *new_symbol, const string &ticker);
 
     void scan_for_best_fr();
 
@@ -64,6 +63,7 @@ public:
 
     void print_symbols_details();
 
+    int get_paths_len();
 };
 
 

@@ -24,8 +24,7 @@ net::awaitable<void> BinanceImpl::connect_websocket(
     const string target,
     websocket::stream<beast::ssl_stream<beast::tcp_stream> > **ws,
     ssl::context **ctx
-)
-{
+) {
     auto executor = co_await net::this_coro::executor;
     auto resolver = net::ip::tcp::resolver{executor};
 
@@ -68,15 +67,13 @@ net::awaitable<void> BinanceImpl::connect_websocket(
 
 net::awaitable<void> BinanceImpl::send_message(
     string message,
-    websocket::stream<beast::ssl_stream<beast::tcp_stream>> &ws
-)
-{
+    websocket::stream<beast::ssl_stream<beast::tcp_stream> > &ws
+) {
     co_await ws.async_write(net::buffer(message));
 }
 
 
-net::awaitable<void> BinanceImpl::read_stream_message()
-{
+net::awaitable<void> BinanceImpl::read_stream_message() {
     beast::flat_buffer buffer;
     while (true) {
         buffer.consume(buffer.size());
@@ -86,7 +83,7 @@ net::awaitable<void> BinanceImpl::read_stream_message()
         jsonData = nlohmann::json::parse(temp);
 
         if (!jsonData.contains("result")) {
-            int timestamp = jsonData["u"].get<int>();
+            // int timestamp = jsonData["u"].get<int>();
             std::string symbol_name = jsonData["s"].get<std::string>();
             double bid_price = std::stod(jsonData["b"].get<std::string>());
             double bid_qty = std::stod(jsonData["B"].get<std::string>());
@@ -106,11 +103,9 @@ net::awaitable<void> BinanceImpl::read_stream_message()
             // std::format("{}", a) << ' ' <<
             // std::format("{}", A) << ' ' << std::endl;
             //--------------------DEBUG-------------------------
-        }
-        else {
+        } else {
             std::cout << "Статус подписки на стрим" << std::endl;
         }
-
     }
 }
 
@@ -135,6 +130,7 @@ net::awaitable<void> BinanceImpl::read_api_message() {
             symbol_->symbol = sym;
             symbol_->base = baseAsset;
             symbol_->quote = quoteAsset;
+            symbol_->criptostock = this;
             this->scanner->add_symbol(symbol_, this->get_name() + sym);
             this->symbols_names.push_back(sym);
         }
@@ -149,9 +145,9 @@ net::awaitable<void> BinanceImpl::subscribe() {
     net::steady_timer timer(executor);
 
     while (this->is_stopped) {
-        timer.expires_after(100ms);  // Устанавливаем таймер на 100 мс
+        timer.expires_after(100ms); // Устанавливаем таймер на 100 мс
         co_await timer.async_wait(
-            boost::asio::use_awaitable);  // Асинхронно ждем 100 мс
+            boost::asio::use_awaitable); // Асинхронно ждем 100 мс
     }
 
     string request = subscribe_request(this->symbols_names);
@@ -165,8 +161,6 @@ net::awaitable<void> BinanceImpl::get_symbols_info() {
     co_await this->send_message(
         request,
         *this->api_ws);
-
-
 }
 
 
@@ -182,10 +176,20 @@ net::awaitable<void> BinanceImpl::init_api_ws() {
     co_await this->get_symbols_info();
     co_await this->read_api_message();
 
+    auto start = std::chrono::high_resolution_clock::now();
     this->scanner->generate_paths();
-    this->scanner->print_paths();
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+    std::cout << "Время поиска всех путей: " << duration.count() << " микросекунд" << std::endl;
+    // this->scanner->print_paths();
 
+    string input;
+    std::cin >> input;
+    if (input == "exit") {
+        std::cout << "Выход из программы." << std::endl;
+    }
 }
+
 
 net::awaitable<void> BinanceImpl::init() {
     co_await this->init_api_ws();

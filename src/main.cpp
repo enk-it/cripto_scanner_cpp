@@ -32,7 +32,7 @@ void update_symbol_price() {
 
 int main() {
     std::cout << "Первая строчка" << std::endl;
-    const int maxlen = 6;
+    const int maxlen = 8;
     vector<string> allowed_tokens = {
         "BRL",
         "USDT",
@@ -57,7 +57,7 @@ int main() {
         "EUR",
     };
 
-    Scanner *scanner = new Scanner(allowed_tokens, 3);
+    Scanner *scanner = new Scanner(allowed_tokens, maxlen);
 
     BinanceImpl binance = BinanceImpl(scanner, "binance");
 

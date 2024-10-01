@@ -12,7 +12,6 @@
 #include "../../include/utils/shared.h"
 
 #include <iostream>
-#include <unordered_set>
 
 
 Scanner::Scanner() : maxlen() {
@@ -24,7 +23,7 @@ Scanner::Scanner(vector<string> t, int m) : tokens(std::move(t)), maxlen(m) {
 }
 
 
-void Scanner::update_symbol(const string& ticker, double best_ask_qty, double best_ask_price, double best_bid_qty,
+void Scanner::update_symbol(const string &ticker, double best_ask_qty, double best_ask_price, double best_bid_qty,
                             double best_bid_price) {
     this->symbols[ticker]->bestAskQty = best_ask_qty;
     this->symbols[ticker]->bestAskPrice = best_ask_price;
@@ -35,9 +34,13 @@ void Scanner::update_symbol(const string& ticker, double best_ask_qty, double be
     // TODO: implement rolling-window update, in ordered to effectively update path's fr's
 }
 
-void Scanner::add_symbol(Symbol *new_symbol, const string& ticker) {
+
+void Scanner::add_symbol(Symbol *new_symbol, const string &ticker) {
     this->symbols[ticker] = new_symbol;
+    this->sorted_symbols[new_symbol->base].push_back(new_symbol);
+    this->sorted_symbols[new_symbol->quote].push_back(new_symbol);
 }
+
 
 void Scanner::scan_for_best_fr() {
     int paths_len = this->paths.size();
@@ -48,12 +51,14 @@ void Scanner::scan_for_best_fr() {
     }
 }
 
+
 bool Scanner::is_allowed_token(const string &token) {
     for (int i = 0; i < this->tokens.size(); i++) {
         if (this->tokens[i] == token) return true;
     }
     return false;
 }
+
 
 void Scanner::print_symbols() {
     for (auto kv: this->symbols) {
@@ -64,105 +69,68 @@ void Scanner::print_symbols() {
 
 
 void Scanner::_generate_paths(
-    const string* start_token,
-    const string* current_token,
-    std::unordered_set<string>* history_set,
-    vector<PathNode*>* history
-    )
-{
-    if (!history->empty() && *start_token == *current_token) {
-        double financial_result = count_fr(0.999f, history->size());
-
-
-        Path *new_path = new Path;
-
-        new_path->financial_result = financial_result;
-        new_path->path = *history;
-
-        this->paths.push_back(*new_path);
-
-        return;
-    }
-    if (history_set->size() >= this->maxlen) {
-        return;
-    }
-
-    for (const auto& symbol : this->symbols_vec) {
-        if (history_set->contains(symbol->symbol)) {
+    const string &start_token,
+    const string *current_token,
+    vector<Symbol *> &history,
+    vector<PathNode *> *history_nodes
+) {
+    for (Symbol *sym: this->sorted_symbols[*current_token]) {
+        if (std::ranges::find(history, sym) != history.end()) continue;
+        if (history_nodes->size() + 1 == this->maxlen && !(sym->base == start_token || sym->quote == start_token))
             continue;
-        }
-        if (symbol->base != *current_token && symbol->quote != *current_token) {
-            continue;
-        }
+
+        PathNode *path_node = new PathNode();
+        path_node->symbol = sym;
+
         string new_token;
-        PathNode* new_path_node = new PathNode();
-        new_path_node->symbol = symbol;
-
-        if (symbol->base == *current_token) {
-            new_token = symbol->quote;
-            new_path_node->is_reversed = false;
+        if (sym->base == *current_token) {
+            path_node->is_reversed = true;
+            new_token = sym->quote;
         } else {
-            new_token = symbol->base;
-            new_path_node->is_reversed = true;
+            path_node->is_reversed = false;
+            new_token = sym->base;
         }
 
-        if (new_token != *start_token) {
-            history->pop_back();
-            continue;
+        history.push_back(sym);
+        history_nodes->push_back(path_node);
+
+        if (new_token == start_token) {
+            Path *path = new Path(0, *history_nodes);
+            path->financial_result = count_fr(history_nodes->size());
+            paths.push_back(*path);
+        } else {
+            _generate_paths(start_token, &new_token, history, history_nodes);
         }
 
-        history->push_back(new_path_node);
-        history_set->insert(symbol->symbol);
-
-        _generate_paths(
-            start_token,
-            &new_token,
-            history_set,
-            history
-            );
-
-        history->pop_back();
-        history_set->erase(symbol->symbol);
-    }
-}
-
-
-void Scanner::_vectorize_symbols() {
-    for (const auto&[fst, snd]: this->symbols) {
-        this->symbols_vec.push_back(snd);
+        history.pop_back();
+        history_nodes->pop_back();
     }
 }
 
 
 void Scanner::print_symbols_details() {
-
     system("clear");
-    for (const auto&[fst, snd]: this->symbols) {
-        std::cout << snd->symbol << " ";
+    for (const auto &[fst, snd]: this->symbols) {
+        std::cout << snd->symbol << " " << std::endl;
         std::cout << std::format("{}", snd->bestAskPrice) << " ";
         std::cout << std::format("{}", snd->bestBidPrice);
         std::cout << std::endl;
     }
-
 }
 
 
 void Scanner::generate_paths() {
-    this->_vectorize_symbols();
-
-    std::unordered_set<string> history_set;
-    vector<PathNode*> history;
+    vector<Symbol *> history;
+    vector<PathNode *> history_nodes;
 
     const string start_token = "USDT";
 
     this->_generate_paths(
+        start_token,
         &start_token,
-        &start_token,
-        &history_set,
-        &history
+        history,
+        &history_nodes
     );
-
-
 }
 
 
@@ -170,10 +138,14 @@ void Scanner::print_paths() {
     for (int j = 0; j < this->paths.size(); j++) {
         std::cout << "--------------------" << std::endl;
         std::cout << this->paths[j].financial_result << std::endl;
-        for (int i = 0; i<this->paths[j].path.size(); i++) {
+        for (int i = 0; i < this->paths[j].path.size(); i++) {
             std::cout << this->paths[j].path[i]->symbol->symbol << std::endl;
         }
     }
     std::cout << this->paths.size() << std::endl;
 }
 
+
+int Scanner::get_paths_len() {
+    return this->paths.size();
+}
