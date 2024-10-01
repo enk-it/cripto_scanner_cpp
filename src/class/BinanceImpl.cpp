@@ -85,12 +85,6 @@ net::awaitable<void> BinanceImpl::read_stream_message()
         nlohmann::json jsonData;
         jsonData = nlohmann::json::parse(temp);
 
-        // std::cout << temp << std::endl;
-
-        if (this->is_stopped) {
-            continue;
-        }
-
         if (!jsonData.contains("result")) {
             int timestamp = jsonData["u"].get<int>();
             std::string symbol_name = jsonData["s"].get<std::string>();
