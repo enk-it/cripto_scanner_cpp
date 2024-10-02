@@ -20,8 +20,8 @@ struct Symbol {
     double comission;
     string base;
     string quote;
-    double bestBidPrice;
-    double bestAskPrice;
+    double bestBidPrice; // здесь хранить уже логарифм по основанию 10 от цены
+    double bestAskPrice; // здесь хранить уже логарифм по основанию 10 от цены
     double bestBidQty;
     double bestAskQty;
 

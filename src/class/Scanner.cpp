@@ -4,6 +4,7 @@
 
 #include "../../include/class/Scanner.h"
 
+#include <cmath>
 #include <format>
 
 #include "../../include/class/BaseCriptoStock.h"
@@ -23,15 +24,27 @@ Scanner::Scanner(vector<string> t, int m) : tokens(std::move(t)), maxlen(m) {
 }
 
 
-void Scanner::update_symbol(const string &ticker, double best_ask_qty, double best_ask_price, double best_bid_qty,
-                            double best_bid_price) {
+void Scanner::update_symbol(
+    const string &ticker,
+    const double best_ask_qty,
+    const double best_ask_price,
+    const double best_bid_qty,
+    const double best_bid_price
+    ) {
+
+    this->_reduce_influence(ticker);
+
     this->symbols[ticker]->bestAskQty = best_ask_qty;
-    this->symbols[ticker]->bestAskPrice = best_ask_price;
+    this->symbols[ticker]->bestAskPrice = log10(best_ask_price);
     this->symbols[ticker]->bestBidQty = best_bid_qty;
-    this->symbols[ticker]->bestBidPrice = best_bid_price;
+    this->symbols[ticker]->bestBidPrice = log10(best_bid_price);
+
+    this->_increase_influence(ticker);
+
     this->print_symbols_details();
     // naive version
     // TODO: implement rolling-window update, in ordered to effectively update path's fr's
+    // TODO: test
 }
 
 
@@ -155,4 +168,31 @@ void Scanner::print_paths() {
 
 int Scanner::get_paths_len() {
     return this->paths.size();
+}
+
+
+void Scanner::_reduce_influence(const string& symbol) {
+    Symbol* current_symbol = this->symbols[symbol];
+    for (int i =0; i < current_symbol->participates.size(); i++) {
+        PathNode *path_node = current_symbol->participates[i];
+        if (path_node->is_reversed) {
+            path_node->path->financial_result -= current_symbol->bestBidPrice;
+        }
+        else {
+            path_node->path->financial_result -= current_symbol->bestAskPrice;
+        }
+    }
+}
+
+void Scanner::_increase_influence(const string& symbol) {
+    Symbol* current_symbol = this->symbols[symbol];
+    for (int i =0; i < current_symbol->participates.size(); i++) {
+        PathNode *path_node = current_symbol->participates[i];
+        if (path_node->is_reversed) {
+            path_node->path->financial_result += current_symbol->bestBidPrice;
+        }
+        else {
+            path_node->path->financial_result -= current_symbol->bestAskPrice;
+        }
+    }
 }

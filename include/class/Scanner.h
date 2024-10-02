@@ -39,6 +39,9 @@ protected:
         vector<PathNode *> *history_nodes
     );
 
+    void _reduce_influence(const string& symbol);
+    void _increase_influence(const string& symbol);
+
 public:
     Scanner();
 
