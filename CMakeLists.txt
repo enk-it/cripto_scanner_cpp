@@ -18,7 +18,6 @@ find_package(Threads REQUIRED)
 
 
 add_executable(cripto_scanner src/main.cpp
-        #        old_src/interface/ICriptoStock.h
         include/structure/Symbol.h
         include/structure/Path.h
         src/class/Scanner.cpp
