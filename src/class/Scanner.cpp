@@ -96,6 +96,13 @@ void Scanner::_generate_paths(
 
         if (new_token == start_token) {
             Path *path = new Path(0, *history_nodes);
+
+            for (int i = 0; i < path->path.size(); i++) {
+                PathNode *local_path_node = path->path[i];
+                local_path_node->path = path; // во все PathNode передаём указатели на Path в которой они представлены
+                local_path_node->symbol->participates.push_back(path->path[i]); ; // в Symbol.participates добавляем PathNode в котором присутствует Symbol
+            } // нужно что бы при получении обновления мы могли получить Scanner.symbols["stockname"+"SYMBOLNAME"].participates[i].path.financial_result
+
             path->financial_result = count_fr(history_nodes->size());
             paths.push_back(*path);
         } else {
@@ -111,7 +118,7 @@ void Scanner::_generate_paths(
 void Scanner::print_symbols_details() {
     system("clear");
     for (const auto &[fst, snd]: this->symbols) {
-        std::cout << snd->symbol << " " << std::endl;
+        std::cout << snd->symbol << " ";
         std::cout << std::format("{}", snd->bestAskPrice) << " ";
         std::cout << std::format("{}", snd->bestBidPrice);
         std::cout << std::endl;

@@ -13,9 +13,11 @@ using std::vector;
 struct PathNode {
     Symbol* symbol;
     bool is_reversed;
+    Path* path;
     PathNode() = default;
     PathNode(Symbol* s, bool ir) :
     symbol(s),
-    is_reversed(ir)
+    is_reversed(ir),
+    path(nullptr)
     {}
 };

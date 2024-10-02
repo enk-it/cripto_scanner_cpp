@@ -176,18 +176,9 @@ net::awaitable<void> BinanceImpl::init_api_ws() {
     co_await this->get_symbols_info();
     co_await this->read_api_message();
 
-    auto start = std::chrono::high_resolution_clock::now();
     this->scanner->generate_paths();
-    auto end = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
-    std::cout << "Время поиска всех путей: " << duration.count() << " микросекунд" << std::endl;
     // this->scanner->print_paths();
 
-    string input;
-    std::cin >> input;
-    if (input == "exit") {
-        std::cout << "Выход из программы." << std::endl;
-    }
 }
 
 
