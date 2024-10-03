@@ -41,7 +41,10 @@ void Scanner::update_symbol(
 
     this->_increase_influence(ticker);
 
+
+    std::cout << std::time(nullptr) << std::endl;
     this->print_symbols_details();
+    this->scan_for_best_fr();
     // naive version
     // TODO: implement rolling-window update, in ordered to effectively update path's fr's
     // TODO: test
@@ -56,12 +59,17 @@ void Scanner::add_symbol(Symbol *new_symbol, const string &ticker) {
 
 
 void Scanner::scan_for_best_fr() {
-    int paths_len = this->paths.size();
-    for (int i = 0; i < paths_len; i++) {
-        if (this->paths[i].financial_result > 1) {
+    for (int i = 0; i < this->paths.size(); i++) {
+        if (this->paths[i].financial_result > 0) {
+            std::cout << "path found" << std::endl;
+            for (int j = 0; j < paths[i].path.size(); j++) {
+                std::cout << paths[i].path[j]->symbol->symbol << " ";
+            }
             std::cout << paths[i].financial_result << std::endl;
         }
     }
+
+    // naive
 }
 
 
