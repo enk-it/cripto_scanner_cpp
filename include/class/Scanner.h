@@ -28,8 +28,8 @@ protected:
     // Key - Token; Values - Vector with Symbols with key Token
     unordered_map<string, vector<Symbol *> > sorted_symbols;
 
-    vector<Path> paths;
-
+    vector<Path*> paths;
+    int initialized_paths = 0;
     int maxlen;
 
     void _generate_paths(

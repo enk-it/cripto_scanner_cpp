@@ -7,6 +7,7 @@
 #include <vector>
 
 struct Symbol;
+struct Path;
 using std::string;
 using std::vector;
 
