@@ -34,20 +34,24 @@ void Scanner::update_symbol(
 
     this->_reduce_influence(ticker);
 
+    // this->symbols[ticker]->bestAskQty = best_ask_qty;
+    // this->symbols[ticker]->bestAskPrice = log10(best_ask_price);
+    // this->symbols[ticker]->bestBidQty = best_bid_qty;
+    // this->symbols[ticker]->bestBidPrice = log10(best_bid_price);
+
     this->symbols[ticker]->bestAskQty = best_ask_qty;
-    this->symbols[ticker]->bestAskPrice = log10(best_ask_price);
+    this->symbols[ticker]->bestAskPrice = best_ask_price;
     this->symbols[ticker]->bestBidQty = best_bid_qty;
-    this->symbols[ticker]->bestBidPrice = log10(best_bid_price);
+    this->symbols[ticker]->bestBidPrice = best_bid_price;
+    this->symbols[ticker]->initialized = true;
 
     this->_increase_influence(ticker);
 
-
+    system("clear");
     std::cout << std::time(nullptr) << std::endl;
-    this->print_symbols_details();
+    // this->print_symbols_details();
+    std::cout << this->paths.size() << " " << this->initialized_paths << std::endl;
     this->scan_for_best_fr();
-    // naive version
-    // TODO: implement rolling-window update, in ordered to effectively update path's fr's
-    // TODO: test
 }
 
 
@@ -60,16 +64,31 @@ void Scanner::add_symbol(Symbol *new_symbol, const string &ticker) {
 
 void Scanner::scan_for_best_fr() {
     for (int i = 0; i < this->paths.size(); i++) {
-        if (this->paths[i].financial_result > 0) {
-            std::cout << "path found" << std::endl;
-            for (int j = 0; j < paths[i].path.size(); j++) {
-                std::cout << paths[i].path[j]->symbol->symbol << " ";
+        bool path_initialized = true;
+        if (this->paths[i]->initialized == false) {
+            for (int j = 0; j < this->paths[i]->path.size(); j++) {
+                if (this->paths[i]->path[j]->symbol->initialized == false) {
+                    path_initialized = false;
+                    break;
+                }
             }
-            std::cout << paths[i].financial_result << std::endl;
+        }
+        if (path_initialized == true) {
+            this->paths[i]->initialized = true;
+            this->initialized_paths += 1;
+        }
+        else {
+            continue;
+        }
+
+
+        if (this->paths[i]->financial_result > 1) {
+            for (int j = 0; j < this->paths[i]->path.size(); j++) {
+                std::cout << this->paths[i]->path[j]->symbol->symbol << " ";
+            }
+            std::cout << this->paths[i]->financial_result << std::endl;
         }
     }
-
-    // naive
 }
 
 
@@ -105,10 +124,10 @@ void Scanner::_generate_paths(
 
         string new_token;
         if (sym->base == *current_token) {
-            path_node->is_reversed = true;
+            path_node->is_reversed = false;
             new_token = sym->quote;
         } else {
-            path_node->is_reversed = false;
+            path_node->is_reversed = true;
             new_token = sym->base;
         }
 
@@ -116,28 +135,26 @@ void Scanner::_generate_paths(
         history_nodes->push_back(path_node);
 
         if (new_token == start_token) {
-            Path *path = new Path(0, *history_nodes);
+            Path *path = new Path(0, *deep_copy(history_nodes));
 
             for (int i = 0; i < path->path.size(); i++) {
-                PathNode *local_path_node = path->path[i];
-                local_path_node->path = path; // во все PathNode передаём указатели на Path в которой они представлены
-                local_path_node->symbol->participates.push_back(path->path[i]); ; // в Symbol.participates добавляем PathNode в котором присутствует Symbol
-            } // нужно что бы при получении обновления мы могли получить Scanner.symbols["stockname"+"SYMBOLNAME"].participates[i].path.financial_result
-
+                path->path[i]->path = path;
+                path->path[i]->symbol->participates.push_back(path->path[i]);
+            }
             path->financial_result = count_fr(history_nodes->size());
-            paths.push_back(*path);
+            paths.push_back(path);
         } else {
             _generate_paths(start_token, &new_token, history, history_nodes);
         }
 
         history.pop_back();
         history_nodes->pop_back();
+
     }
 }
 
 
 void Scanner::print_symbols_details() {
-    system("clear");
     for (const auto &[fst, snd]: this->symbols) {
         std::cout << snd->symbol << " ";
         std::cout << std::format("{}", snd->bestAskPrice) << " ";
@@ -165,9 +182,9 @@ void Scanner::generate_paths() {
 void Scanner::print_paths() {
     for (int j = 0; j < this->paths.size(); j++) {
         std::cout << "--------------------" << std::endl;
-        std::cout << this->paths[j].financial_result << std::endl;
-        for (int i = 0; i < this->paths[j].path.size(); i++) {
-            std::cout << this->paths[j].path[i]->symbol->symbol << std::endl;
+        std::cout << this->paths[j]->financial_result << std::endl;
+        for (int i = 0; i < this->paths[j]->path.size(); i++) {
+            std::cout << this->paths[j]->path[i]->symbol->symbol << std::endl;
         }
     }
     std::cout << this->paths.size() << std::endl;
@@ -181,26 +198,25 @@ int Scanner::get_paths_len() {
 
 void Scanner::_reduce_influence(const string& symbol) {
     Symbol* current_symbol = this->symbols[symbol];
+
     for (int i =0; i < current_symbol->participates.size(); i++) {
-        PathNode *path_node = current_symbol->participates[i];
-        if (path_node->is_reversed) {
-            path_node->path->financial_result -= current_symbol->bestBidPrice;
+        if (current_symbol->participates[i]->is_reversed) {
+            current_symbol->participates[i]->path->financial_result *= current_symbol->bestAskPrice; // возможно поменять местами с 187
         }
         else {
-            path_node->path->financial_result -= current_symbol->bestAskPrice;
+            current_symbol->participates[i]->path->financial_result /= current_symbol->bestBidPrice;
         }
     }
 }
 
 void Scanner::_increase_influence(const string& symbol) {
     Symbol* current_symbol = this->symbols[symbol];
-    for (int i =0; i < current_symbol->participates.size(); i++) {
-        PathNode *path_node = current_symbol->participates[i];
-        if (path_node->is_reversed) {
-            path_node->path->financial_result += current_symbol->bestBidPrice;
+    for (int i = 0; i < current_symbol->participates.size(); i++) {
+        if (current_symbol->participates[i]->is_reversed) {
+            current_symbol->participates[i]->path->financial_result /= current_symbol->bestAskPrice; // возможно поменять местами с 199
         }
         else {
-            path_node->path->financial_result -= current_symbol->bestAskPrice;
+            current_symbol->participates[i]->path->financial_result *= current_symbol->bestBidPrice;
         }
     }
 }

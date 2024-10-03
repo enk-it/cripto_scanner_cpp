@@ -20,12 +20,13 @@ struct PathNode;
 struct Path {
     double financial_result; // здесь хранить логарифм
     vector<PathNode*> path;
+    bool initialized = false;
 
     Path() = default;
     Path(
         double fr,
         vector<PathNode*> p
-        ) : financial_result(fr), path(std::move(p)) {}
+        ) : financial_result(fr), path(p) {}
 };
 
 

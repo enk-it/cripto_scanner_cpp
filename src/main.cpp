@@ -32,7 +32,7 @@ void update_symbol_price() {
 
 int main() {
     std::cout << "Первая строчка" << std::endl;
-    const int maxlen = 8;
+    const int maxlen = 6;
     vector<string> allowed_tokens = {
         "BRL",
         "USDT",

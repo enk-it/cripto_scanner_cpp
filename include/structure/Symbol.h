@@ -5,6 +5,7 @@
 #pragma once
 
 #include <string>
+#include <unordered_set>
 #include <vector>
 
 class BaseCriptoStock;
@@ -24,6 +25,8 @@ struct Symbol {
     double bestAskPrice; // здесь хранить уже логарифм по основанию 10 от цены
     double bestBidQty;
     double bestAskQty;
+
+    bool initialized = false;
 
     vector<PathNode *> participates;
     BaseCriptoStock *criptostock;
