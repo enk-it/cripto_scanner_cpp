@@ -174,7 +174,8 @@ void Scanner::print_symbols_details() {
         std::cout << fst << " ";
         std::cout << std::format("{}", snd->bestAskPrice) << " ";
         std::cout << std::format("{}", snd->bestBidPrice) << " ";
-        std::cout << std::format("{}", snd->lud);
+        std::cout << snd->lud << " ";
+        std::cout << snd->initialized;
         std::cout << std::endl;
     }
 }
