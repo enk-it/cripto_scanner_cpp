@@ -57,31 +57,15 @@ int main() {
         "EUR",
     };
 
-    Scanner *scanner = new Scanner(allowed_tokens, maxlen);
-
-    BinanceImpl binance = BinanceImpl(scanner, "binance");
 
     net::io_context ioc;
 
-    net::co_spawn(
-        ioc,
-        binance.init_stream_ws(),
-        [](std::exception_ptr e) {
-            if (e)
-                std::rethrow_exception(e);
-        });
+    Scanner *scanner = new Scanner(allowed_tokens, maxlen, &ioc);
+    BinanceImpl *binance = new BinanceImpl(scanner, "binance");
 
-    net::co_spawn(
-        ioc,
-        binance.init_api_ws(),
-        [](std::exception_ptr e) {
-            if (e)
-                std::rethrow_exception(e);
-        });
+    scanner->add_stock(binance);
 
-
-    ioc.run();
-
+    scanner->init();
 
     return 0;
 }
