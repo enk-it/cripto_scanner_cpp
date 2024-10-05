@@ -34,16 +34,6 @@ protected:
 
     net::awaitable<void> subscribe();
 
-    net::awaitable<void> connect_websocket(
-        string host,
-        string port,
-        string target,
-        websocket::stream<beast::ssl_stream<beast::tcp_stream> > **ws,
-        ssl::context **ctx
-    );
-
-    net::awaitable<void> send_message(string message, websocket::stream<beast::ssl_stream<beast::tcp_stream> > &ws);
-
     net::awaitable<void> read_stream_message();
 
     net::awaitable<void> read_api_message();
