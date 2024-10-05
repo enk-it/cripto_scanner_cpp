@@ -30,8 +30,6 @@ protected:
 
     bool is_stopped = true;
 
-    std::vector<string> symbols_names;
-
     net::awaitable<void> subscribe();
 
     net::awaitable<void> read_stream_message();

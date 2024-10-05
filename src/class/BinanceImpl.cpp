@@ -16,6 +16,10 @@ BinanceImpl::BinanceImpl() = default;
 BinanceImpl::BinanceImpl(Scanner *scanner, string stockmarket_name) {
     this->scanner = scanner;
     this->stockmarket_name = stockmarket_name;
+
+    this->ctx = new ssl::context(ssl::context::tlsv12_client);
+    this->ctx->set_default_verify_paths();
+    this->ctx->set_verify_mode(ssl::verify_peer);
 }
 
 net::awaitable<void> BinanceImpl::read_stream_message() {

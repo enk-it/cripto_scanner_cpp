@@ -26,6 +26,7 @@ protected:
     Scanner* scanner;
     string stockmarket_name;
     bool to_update=false;
+    std::vector<string> symbols_names;
 
     void on_update (
         const string& symbol_name,
