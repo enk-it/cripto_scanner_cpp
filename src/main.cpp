@@ -4,6 +4,7 @@
 
 #include "../include/class/Scanner.h"
 #include "../include/class/BinanceImpl.h"
+#include "../include/class/BybitImpl.h"
 
 
 using std::string;
@@ -63,7 +64,14 @@ int main() {
     Scanner *scanner = new Scanner(allowed_tokens, maxlen, &ioc);
     BinanceImpl *binance = new BinanceImpl(scanner, "binance");
 
+
+    BybitImpl *bybit = new BybitImpl(scanner, "binance");
+
+
+    // bybit->init(ioc);
+
     scanner->add_stock(binance);
+    scanner->add_stock(bybit);
 
     scanner->init();
 

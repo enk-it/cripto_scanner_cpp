@@ -41,7 +41,8 @@ protected:
 public:
     BybitImpl();
 
-    BybitImpl(Scanner *scanner, string stockmarket_name);
+    BybitImpl(Scanner *scanner,
+              const string &stockmarket_name);
 
     void init(net::io_context& ioc);
 
