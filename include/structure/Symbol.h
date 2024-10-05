@@ -27,6 +27,10 @@ struct Symbol {
     double bestAskQty;
 
     bool initialized = false;
+    bool initialized_ask = false;
+    bool initialized_bid = false;
+
+    long lud;
 
     vector<PathNode *> participates;
     BaseCriptoStock *criptostock;

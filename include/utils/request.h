@@ -7,7 +7,10 @@
 #include <string>
 #include <vector>
 
-std::string subscribe_request(std::vector<std::string> symbols);
-std::string exchange_request();
+std::string binance_subscribe_request(std::vector<std::string> symbols);
+std::string binance_exchange_request();
+
+std::string bybit_subscribe_request(std::vector<std::string> symbols);
+
 
 #endif //REQUEST_H

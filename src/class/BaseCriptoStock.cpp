@@ -33,13 +33,15 @@ void BaseCriptoStock::on_update (
     double ask_qty,
     double ask_price,
     double bid_qty,
-    double bid_price
+    double bid_price,
+    long lud
     ) {
     this->scanner->update_symbol(
                 this->stockmarket_name + symbol_name,
                 ask_qty,
                 ask_price,
                 bid_qty,
-                bid_price
+                bid_price,
+                lud
             );
 }

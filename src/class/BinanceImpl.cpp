@@ -49,7 +49,8 @@ net::awaitable<void> BinanceImpl::read_stream_message() {
                     ask_qty,
                     ask_price,
                     bid_qty,
-                    bid_price
+                    bid_price,
+                    std::time(nullptr)
                 );
         } else {
             std::cout << "Статус подписки на стрим" << std::endl;
@@ -103,13 +104,13 @@ net::awaitable<void> BinanceImpl::subscribe() {
             ); // Асинхронно ждем 100 мс
     }
 
-    string request = subscribe_request(this->symbols_names);
+    string request = binance_subscribe_request(this->symbols_names);
     co_await send_message(request, *this->stream_ws);
 }
 
 
 net::awaitable<void> BinanceImpl::get_symbols_info() {
-    string request = exchange_request();
+    string request = binance_exchange_request();
 
     co_await send_message(
         request,

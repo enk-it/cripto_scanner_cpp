@@ -61,7 +61,7 @@ public:
     void init();
     void stock_ready(); // Биржа обязана это использовать
     void update_symbol(const string &ticker, double best_ask_qty, double best_ask_price, double best_bid_qty,
-                       double best_bid_price); // Биржа обязана это использовать
+                       double best_bid_price, long lud); // Биржа обязана это использовать
     void add_symbol(Symbol *new_symbol, const string &ticker); // Биржа обязана это использовать
     void add_stock(BaseCriptoStock* stock); // Обязательно использовать для добавления
     bool is_allowed_token(const string &token); // Биржа обязана это использовать

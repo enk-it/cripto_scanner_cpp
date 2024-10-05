@@ -29,7 +29,8 @@ void Scanner::update_symbol(
     const double best_ask_qty,
     const double best_ask_price,
     const double best_bid_qty,
-    const double best_bid_price
+    const double best_bid_price,
+    const long lud
     ) {
 
     this->_reduce_influence(ticker);
@@ -39,17 +40,30 @@ void Scanner::update_symbol(
     // this->symbols[ticker]->bestBidQty = best_bid_qty;
     // this->symbols[ticker]->bestBidPrice = log10(best_bid_price);
 
-    this->symbols[ticker]->bestAskQty = best_ask_qty;
-    this->symbols[ticker]->bestAskPrice = best_ask_price;
-    this->symbols[ticker]->bestBidQty = best_bid_qty;
-    this->symbols[ticker]->bestBidPrice = best_bid_price;
-    this->symbols[ticker]->initialized = true;
+    if (best_ask_price != -1) {
+        this->symbols[ticker]->bestAskQty = best_ask_qty;
+        this->symbols[ticker]->bestAskPrice = best_ask_price;
+        this->symbols[ticker]->initialized_ask = true;
+
+    }
+    if (best_bid_price != -1) {
+        this->symbols[ticker]->bestBidQty = best_bid_qty;
+        this->symbols[ticker]->bestBidPrice = best_bid_price;
+        this->symbols[ticker]->initialized_bid = true;
+
+    }
+
+    if (this->symbols[ticker]->initialized_bid && this->symbols[ticker]->initialized_ask) {
+        this->symbols[ticker]->initialized = true;
+    }
+
+    this->symbols[ticker]->lud = lud;
 
     this->_increase_influence(ticker);
 
     system("clear");
     std::cout << std::time(nullptr) << std::endl;
-    // this->print_symbols_details();
+    this->print_symbols_details();
     std::cout << this->paths.size() << " " << this->initialized_paths << std::endl;
     this->scan_for_best_fr();
 }
@@ -63,6 +77,7 @@ void Scanner::add_symbol(Symbol *new_symbol, const string &ticker) {
 
 
 void Scanner::scan_for_best_fr() {
+    int count = 0;
     for (int i = 0; i < this->paths.size(); i++) {
         if (this->paths[i]->initialized == false) {
             bool path_initialized = true;
@@ -81,12 +96,12 @@ void Scanner::scan_for_best_fr() {
             }
         }
 
-
-        if (this->paths[i]->financial_result > 1 /*|| i < 10*/) {
+        if (this->paths[i]->financial_result > 1 && count < 10/*|| i < 10*/) {
             for (int j = 0; j < this->paths[i]->path.size(); j++) {
-                std::cout << this->paths[i]->path[j]->symbol->symbol << " ";
+                std::cout << this->paths[i]->path[j]->symbol->criptostock->stockmarket_name << this->paths[i]->path[j]->symbol->symbol << " ";
             }
             std::cout << this->paths[i]->financial_result << std::endl;
+            count += 1;
         }
     }
 }
@@ -156,9 +171,10 @@ void Scanner::_generate_paths(
 
 void Scanner::print_symbols_details() {
     for (const auto &[fst, snd]: this->symbols) {
-        std::cout << snd->symbol << " ";
+        std::cout << fst << " ";
         std::cout << std::format("{}", snd->bestAskPrice) << " ";
-        std::cout << std::format("{}", snd->bestBidPrice);
+        std::cout << std::format("{}", snd->bestBidPrice) << " ";
+        std::cout << std::format("{}", snd->lud);
         std::cout << std::endl;
     }
 }

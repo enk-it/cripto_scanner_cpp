@@ -35,7 +35,7 @@ int main() {
     std::cout << "Первая строчка" << std::endl;
     const int maxlen = 6;
     vector<string> allowed_tokens = {
-        "BRL",
+        // "BRL",
         "USDT",
         "BTC",
         "BNB",
@@ -44,31 +44,27 @@ int main() {
         "DOGE",
         "SHIB",
         "XRP",
-        "ADA",
-        "DAI",
-        "DOT",
-        "LINK",
-        "MATIC",
-        "SOL",
+        // "ADA",
+        // "DAI",
+        // "DOT",
+        // "LINK",
+        // "MATIC",
+        // "SOL",
         "TRX",
-        "AAVE",
+        // "AAVE",
         "FTM",
         "AVAX",
-        "ATOM",
-        "EUR",
+        // "ATOM",
+        // "EUR",
     };
 
 
     net::io_context ioc;
 
     Scanner *scanner = new Scanner(allowed_tokens, maxlen, &ioc);
-    BinanceImpl *binance = new BinanceImpl(scanner, "binance");
 
-
-    BybitImpl *bybit = new BybitImpl(scanner, "binance");
-
-
-    // bybit->init(ioc);
+    BinanceImpl *binance = new BinanceImpl(scanner, "i");
+    BybitImpl *bybit = new BybitImpl(scanner, "y");
 
     scanner->add_stock(binance);
     scanner->add_stock(bybit);

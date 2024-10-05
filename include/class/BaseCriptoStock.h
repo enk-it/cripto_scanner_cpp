@@ -24,7 +24,6 @@ using std::move;
 class BaseCriptoStock {
 protected:
     Scanner* scanner;
-    string stockmarket_name;
     bool to_update=false;
     std::vector<string> symbols_names;
 
@@ -33,10 +32,13 @@ protected:
         double ask_qty,
         double ask_price,
         double bid_qty,
-        double bid_price
+        double bid_price,
+        long lud
         );
 
 public:
+    string stockmarket_name;
+
     BaseCriptoStock();
     explicit BaseCriptoStock(Scanner* scanner);
     ~BaseCriptoStock();

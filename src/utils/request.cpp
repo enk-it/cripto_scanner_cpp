@@ -10,7 +10,7 @@
 #include <nlohmann/json_fwd.hpp>
 
 
-std::string subscribe_request(std::vector<std::string> symbols) {
+std::string binance_subscribe_request(std::vector<std::string> symbols) {
     nlohmann::json request;
 
     for (int i = 0; i< symbols.size(); i++) {
@@ -29,12 +29,28 @@ std::string subscribe_request(std::vector<std::string> symbols) {
 
 }
 
-std::string exchange_request() {
+std::string binance_exchange_request() {
     nlohmann::json request;
     request["id"] = get_uuid();
     request["method"] = "exchangeInfo";
     request["params"] = nlohmann::json::object();
 
+
+    return request.dump();
+}
+
+
+std::string bybit_subscribe_request(std::vector<std::string> symbols) {
+    nlohmann::json request;
+
+    for (int i = 0; i< symbols.size(); i++) {
+        std::string symbol = symbols[i];
+        symbols[i] = "orderbook.1." + symbol;
+    }
+
+    request["req_id"] = get_uuid();
+    request["op"] = "subscribe";
+    request["args"] = symbols;
 
     return request.dump();
 }

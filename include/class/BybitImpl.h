@@ -24,10 +24,8 @@ namespace ssl = boost::asio::ssl;
 
 class BybitImpl : public BaseCriptoStock {
 protected:
-    websocket::stream<beast::ssl_stream<beast::tcp_stream> > *ws = nullptr;
+    websocket::stream<beast::ssl_stream<beast::tcp_stream> > *stream_ws = nullptr;
     ssl::context *ctx = nullptr; // Также храним SSL-контекст в поле класса
-
-    bool is_stopped = true;
 
     net::awaitable<void> subscribe();
 
@@ -35,7 +33,10 @@ protected:
 
     void get_symbols_info();
 
-    net::awaitable<void> init_ws();
+    net::awaitable<void> init_stream_ws();
+
+    unordered_map<string, unordered_map<double, double>*> order_book_bid;
+    unordered_map<string, unordered_map<double, double>*> order_book_ask;
 
 
 public:
@@ -44,7 +45,7 @@ public:
     BybitImpl(Scanner *scanner,
               const string &stockmarket_name);
 
-    void init(net::io_context& ioc);
+    void init() override;
 
 
 };

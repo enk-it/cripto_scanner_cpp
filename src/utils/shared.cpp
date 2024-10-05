@@ -94,6 +94,7 @@ net::awaitable<void> connect_websocket(
     co_await (*ws)->async_handshake(full_host, target);
 }
 
+
 net::awaitable<void> send_message(
     std::string message,
     websocket::stream<beast::ssl_stream<beast::tcp_stream> > &ws
