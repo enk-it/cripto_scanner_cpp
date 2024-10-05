@@ -40,4 +40,6 @@ net::awaitable<void> connect_websocket(
         ssl::context **ctx
     );
 
+std::string httpsGet(const std::string& host, const std::string& path, ssl::context *ctx);
+
 

@@ -9,6 +9,16 @@
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>         // streaming operators etc.
 
+#include <boost/beast/core.hpp>
+#include <boost/beast/http.hpp>
+#include <boost/beast/version.hpp>
+#include <boost/asio/ip/tcp.hpp>
+#include <cstdlib>
+#include <iostream>
+#include <string>
+
+
+
 
 struct PathNode;
 
@@ -47,9 +57,10 @@ net::awaitable<void> connect_websocket(
     auto executor = co_await net::this_coro::executor;
     auto resolver = net::ip::tcp::resolver{executor};
 
-    (*ctx) = new ssl::context(ssl::context::tlsv12_client);
-    (*ctx)->set_default_verify_paths();
-    (*ctx)->set_verify_mode(ssl::verify_peer);
+    // (*ctx) = new ssl::context(ssl::context::tlsv12_client);
+    // (*ctx)->set_default_verify_paths();
+    // (*ctx)->set_verify_mode(ssl::verify_peer);
+
     (*ws) = new websocket::stream<beast::ssl_stream<beast::tcp_stream> >(executor, **ctx);
 
     auto const results = co_await resolver.async_resolve(host, port);
@@ -88,4 +99,45 @@ net::awaitable<void> send_message(
     websocket::stream<beast::ssl_stream<beast::tcp_stream> > &ws
 ) {
     co_await ws.async_write(net::buffer(message));
+}
+
+
+std::string httpsGet(const std::string& host, const std::string& path, ssl::context *ctx) {
+    net::io_context ioc;
+    auto resolver = net::ip::tcp::resolver{ioc};
+
+    beast::ssl_stream<beast::tcp_stream> stream(ioc, *ctx);
+
+    if(!SSL_set_tlsext_host_name(stream.native_handle(), host.c_str())) {
+        beast::error_code ec{static_cast<int>(::ERR_get_error()), net::error::get_ssl_category()};
+        throw beast::system_error{ec};
+    }
+
+    auto const results = resolver.resolve(host, "443");
+    beast::get_lowest_layer(stream).connect(results);
+
+    stream.handshake(ssl::stream_base::client);
+
+    http::request<http::string_body> req{http::verb::get, path, 11};
+    req.set(http::field::host, host);
+    req.set(http::field::user_agent, BOOST_BEAST_VERSION_STRING);
+
+    // Отправка запроса
+    http::write(stream, req);
+
+    // Буфер для ответа
+    beast::flat_buffer buffer;
+
+    // Объект для хранения ответа
+    http::response<http::dynamic_body> res;
+
+    // Получение ответа
+    http::read(stream, buffer, res);
+
+    // Закрытие сокета
+    beast::error_code ec;
+    stream.shutdown(ec);
+
+    // Возвращаем тело ответа в виде строки
+    return buffers_to_string(res.body().data());
 }
