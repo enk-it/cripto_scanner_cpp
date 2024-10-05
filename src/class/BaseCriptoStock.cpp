@@ -30,11 +30,11 @@ void BaseCriptoStock::allow_update () {
 
 void BaseCriptoStock::on_update (
     const string& symbol_name,
-    double ask_qty,
-    double ask_price,
-    double bid_qty,
-    double bid_price,
-    long lud
+    const double ask_qty,
+    const double ask_price,
+    const double bid_qty,
+    const double bid_price,
+    const long lud
     ) {
     this->scanner->update_symbol(
                 this->stockmarket_name + symbol_name,

@@ -117,10 +117,10 @@ net::awaitable<void> BybitImpl::read_stream_message() {
                     double ask_qty = std::stod(asks[0][1]);
 
                     if (ask_qty == 0) {
-                        this->order_book_bid[symbol_name]->erase(ask_price);
+                        this->order_book_ask[symbol_name]->erase(ask_price);
                     }
                     else {
-                        (*this->order_book_bid[symbol_name])[ask_price] = ask_qty;
+                        (*this->order_book_ask[symbol_name])[ask_price] = ask_qty;
                     }
                 }
                 if (bids.size() == 1) {
@@ -149,7 +149,7 @@ net::awaitable<void> BybitImpl::read_stream_message() {
                 }
             }
             for (auto pair : *this->order_book_bid[symbol_name]) {
-                if (ask_price == -1 || pair.first > bid_price) {
+                if (bid_price == -1 || pair.first > bid_price) {
                     bid_price = pair.first;
                     bid_qty = pair.second;
                 }
