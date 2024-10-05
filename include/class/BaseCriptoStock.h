@@ -25,22 +25,23 @@ class BaseCriptoStock {
 protected:
     Scanner* scanner;
     string stockmarket_name;
-    bool is_stopped=true;
-public:
-    BaseCriptoStock();  // Виртуальный деструктор
-    explicit BaseCriptoStock(Scanner* scanner);  // Виртуальный деструктор
-    ~BaseCriptoStock();  // Виртуальный деструктор
-    void init(); // здесь делаем запрос насчёт доступных symbols (symbols), заполняем их, фильтруя по available_tokens. Подключаем websocket.
-    string get_name();
-    void trade ();
+    bool to_update=false;
+
     void on_update (
-        string symbol_name,
-        double ask_price,
-        double bid_price,
+        const string& symbol_name,
         double ask_qty,
-        double bid_qty
+        double ask_price,
+        double bid_qty,
+        double bid_price
         );
 
+public:
+    BaseCriptoStock();
+    explicit BaseCriptoStock(Scanner* scanner);
+    ~BaseCriptoStock();
+    virtual void init();
+    void trade ();
+    void allow_update();
 };
 
 

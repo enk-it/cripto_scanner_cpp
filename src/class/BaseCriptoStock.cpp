@@ -19,20 +19,27 @@ void BaseCriptoStock::init () {
 
 }
 
-string BaseCriptoStock::get_name () {
-    return this->stockmarket_name;
-}
 
 void BaseCriptoStock::trade () {
 
 }
 
-void BaseCriptoStock::on_update (
-    string symbol_name,
-    double ask_price,
-    double bid_price,
-    double ask_qty,
-    double bid_qty
-    ) {
+void BaseCriptoStock::allow_update () {
+    this->to_update = true;
+}
 
+void BaseCriptoStock::on_update (
+    const string& symbol_name,
+    double ask_qty,
+    double ask_price,
+    double bid_qty,
+    double bid_price
+    ) {
+    this->scanner->update_symbol(
+                this->stockmarket_name + symbol_name,
+                ask_qty,
+                ask_price,
+                bid_qty,
+                bid_price
+            );
 }

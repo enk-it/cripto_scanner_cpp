@@ -8,8 +8,8 @@
 #include <format>
 
 #include "../../include/class/BaseCriptoStock.h"
-#include "../../include/structure/PathNode.h"
 #include "../../include/structure/Path.h"
+#include "../../include/structure/PathNode.h"
 #include "../../include/utils/shared.h"
 
 #include <iostream>
@@ -20,7 +20,7 @@ Scanner::Scanner() : maxlen() {
 
 Scanner::~Scanner() = default;
 
-Scanner::Scanner(vector<string> t, int m) : tokens(std::move(t)), maxlen(m) {
+Scanner::Scanner(vector<string> t, int m, net::io_context* ioc) : tokens(std::move(t)), maxlen(m), ioc(ioc) {
 }
 
 
@@ -82,8 +82,7 @@ void Scanner::scan_for_best_fr() {
         }
 
 
-
-        if (this->paths[i]->financial_result > 1) {
+        if (this->paths[i]->financial_result > 1 /*|| i < 10*/) {
             for (int j = 0; j < this->paths[i]->path.size(); j++) {
                 std::cout << this->paths[i]->path[j]->symbol->symbol << " ";
             }
@@ -180,23 +179,6 @@ void Scanner::generate_paths() {
 }
 
 
-void Scanner::print_paths() {
-    for (int j = 0; j < this->paths.size(); j++) {
-        std::cout << "--------------------" << std::endl;
-        std::cout << this->paths[j]->financial_result << std::endl;
-        for (int i = 0; i < this->paths[j]->path.size(); i++) {
-            std::cout << this->paths[j]->path[i]->symbol->symbol << std::endl;
-        }
-    }
-    std::cout << this->paths.size() << std::endl;
-}
-
-
-int Scanner::get_paths_len() {
-    return this->paths.size();
-}
-
-
 void Scanner::_reduce_influence(const string& symbol) {
     Symbol* current_symbol = this->symbols[symbol];
 
@@ -218,6 +200,30 @@ void Scanner::_increase_influence(const string& symbol) {
         }
         else {
             current_symbol->participates[i]->path->financial_result *= current_symbol->bestBidPrice;
+        }
+    }
+}
+
+
+void Scanner::add_stock(BaseCriptoStock* stock) {
+    this->stocks.push_back(stock);
+}
+
+void Scanner::init() {
+    for (int i = 0; i < this->stocks.size(); i++) {
+        this->stocks[i]->init();
+    }
+
+    this->ioc->run();
+}
+
+void Scanner::stock_ready() {
+    this->stocks_ready += 1;
+
+    if (this->stocks_ready == this->stocks.size()) {
+        this->generate_paths();
+        for (int i = 0; i < this->stocks.size(); i++) {
+            this->stocks[i]->allow_update();
         }
     }
 }

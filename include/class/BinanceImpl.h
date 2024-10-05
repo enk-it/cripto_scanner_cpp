@@ -40,16 +40,15 @@ protected:
 
     net::awaitable<void> get_symbols_info();
 
-public:
-    BinanceImpl();
-
-    BinanceImpl(Scanner *scanner, string stockmarket_name);
-
     net::awaitable<void> init_stream_ws();
 
     net::awaitable<void> init_api_ws();
 
-    net::awaitable<void> init();
+public:
+    BinanceImpl();
+    BinanceImpl(Scanner *scanner, string stockmarket_name);
+
+    void init() override;
 
 
 };

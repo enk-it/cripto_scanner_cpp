@@ -19,18 +19,20 @@ using std::unordered_map;
 #include "../structure/Path.h"
 #include "../structure/Symbol.h"
 
+#include <boost/asio/co_spawn.hpp>
+
 
 class Scanner {
 protected:
     vector<string> tokens;
     unordered_map<string, Symbol *> symbols;
-
-    // Key - Token; Values - Vector with Symbols with key Token
+    vector<BaseCriptoStock*> stocks;
     unordered_map<string, vector<Symbol *> > sorted_symbols;
-
     vector<Path*> paths;
     int initialized_paths = 0;
     int maxlen;
+
+    int stocks_ready = 0;
 
     void _generate_paths(
         const string &start_token,
@@ -42,31 +44,27 @@ protected:
     void _reduce_influence(const string& symbol);
     void _increase_influence(const string& symbol);
 
-public:
-    Scanner();
-
-    ~Scanner();
-
-    Scanner(vector<string> t, int m);
-
-    void update_symbol(const string &ticker, double best_ask_qty, double best_ask_price, double best_bid_qty,
-                       double best_bid_price);
-
-    void add_symbol(Symbol *new_symbol, const string &ticker);
-
     void scan_for_best_fr();
 
-    bool is_allowed_token(const string &token);
-
+    void print_symbols_details();
     void print_symbols();
-
     void generate_paths();
 
-    void print_paths();
+public:
+    Scanner();
+    ~Scanner();
+    Scanner(vector<string> t, int m, boost::asio::io_context* ioc);
 
-    void print_symbols_details();
+    boost::asio::io_context* ioc = nullptr;
 
-    int get_paths_len();
+
+    void init();
+    void stock_ready(); // Биржа обязана это использовать
+    void update_symbol(const string &ticker, double best_ask_qty, double best_ask_price, double best_bid_qty,
+                       double best_bid_price); // Биржа обязана это использовать
+    void add_symbol(Symbol *new_symbol, const string &ticker); // Биржа обязана это использовать
+    void add_stock(BaseCriptoStock* stock); // Обязательно использовать для добавления
+    bool is_allowed_token(const string &token); // Биржа обязана это использовать
 };
 
 
