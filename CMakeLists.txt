@@ -20,24 +20,20 @@ find_package(Threads REQUIRED)
 add_executable(cripto_scanner src/main.cpp
         include/structure/Symbol.h
         include/structure/Path.h
-        src/class/Scanner.cpp
-        include/class/Scanner.h
-        src/class/Wallet.cpp
-        include/class/Wallet.h
         include/structure/PathNode.h
+        include/class/Scanner.h
         include/class/BinanceImpl.h
-        src/class/BinanceImpl.cpp
         include/class/BaseCriptoStock.h
-        include/class/OkxImpl.h
-        src/class/OkxImpl.cpp
-        src/class/BaseCriptoStock.cpp
-        include/utils/shared.h
-        src/utils/shared.cpp
-        src/structure/Symbol.cpp
-        include/utils/request.h
-        src/utils/request.cpp
         include/class/BybitImpl.h
+        include/utils/shared.h
+        include/utils/request.h
+        src/structure/Symbol.cpp
+        src/class/Scanner.cpp
+        src/class/BinanceImpl.cpp
+        src/class/BaseCriptoStock.cpp
         src/class/BybitImpl.cpp
+        src/utils/shared.cpp
+        src/utils/request.cpp
 )
 
 target_include_directories(cripto_scanner PRIVATE ${Boost_INCLUDE_DIRS} ${OPENSSL_INCLUDE_DIR})
