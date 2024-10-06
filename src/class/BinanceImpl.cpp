@@ -111,14 +111,14 @@ net::awaitable<void> BinanceImpl::get_symbols_info() {
 
 
 net::awaitable<void> BinanceImpl::init_stream_ws() {
-    co_await connect_websocket("stream.binance.com", "443", "/ws", &this->stream_ws, &this->ctx);
+    co_await connect_websocket("stream.binance.com", "443", "/ws", this->stream_ws, this->ctx);
     co_await this->subscribe();
     co_await this->read_stream_message();
 }
 
 
 net::awaitable<void> BinanceImpl::init_api_ws() {
-    co_await connect_websocket("ws-api.binance.com", "443", "/ws-api/v3", &this->api_ws, &this->ctx);
+    co_await connect_websocket("ws-api.binance.com", "443", "/ws-api/v3", this->api_ws, this->ctx);
     co_await this->get_symbols_info();
     co_await this->read_api_message();
 

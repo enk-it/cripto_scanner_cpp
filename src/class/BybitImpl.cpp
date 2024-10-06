@@ -164,7 +164,7 @@ net::awaitable<void> BybitImpl::read_stream_message() {
 
 
 net::awaitable<void> BybitImpl::init_stream_ws() {
-    co_await connect_websocket("stream.bybit.com", "443", "/v5/public/spot", &this->stream_ws, &this->ctx);
+    co_await connect_websocket("stream.bybit.com", "443", "/v5/public/spot", this->stream_ws, this->ctx);
     co_await this->subscribe();
     co_await this->read_stream_message();
 }
