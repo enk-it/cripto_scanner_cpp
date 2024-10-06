@@ -15,7 +15,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 find_package(Boost REQUIRED COMPONENTS system)
 find_package(OpenSSL REQUIRED)
 find_package(Threads REQUIRED)
-find_package(cpr REQUIRED)
 
 
 add_executable(cripto_scanner src/main.cpp
@@ -48,7 +47,6 @@ target_link_libraries(cripto_scanner
         OpenSSL::SSL
         OpenSSL::Crypto
         Threads::Threads
-        cpr::cpr
 )
 
 # If you're on a Unix-like system, you might also need to link against the realtime library
