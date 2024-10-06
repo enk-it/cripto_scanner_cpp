@@ -108,9 +108,9 @@ net::awaitable<void> BybitImpl::read_stream_message() {
                 (*this->order_book_ask[symbol_name])[ask_price] = ask_qty;
             }
             else {
-                if (asks.size() == 1) {
-                    std::string ask_price = asks[0][0];
-                    std::string ask_qty = asks[0][1];
+                for (int i = 0; i < asks.size(); i ++) {
+                    std::string ask_price = asks[i][0];
+                    std::string ask_qty = asks[i][1];
 
                     if (ask_qty == "0") {
                         this->order_book_ask[symbol_name]->erase(ask_price);
@@ -119,10 +119,10 @@ net::awaitable<void> BybitImpl::read_stream_message() {
                         (*this->order_book_ask[symbol_name])[ask_price] = ask_qty;
                     }
                 }
-                if (bids.size() == 1) {
-                    std::string bid_price = bids[0][0];
-                    std::string bid_qty = bids[0][1];
 
+                for (int i = 0; i < bids.size(); i ++) {
+                    std::string bid_price = bids[i][0];
+                    std::string bid_qty = bids[i][1];
                     if (bid_qty == "0") {
                         this->order_book_bid[symbol_name]->erase(bid_price);
                     }
@@ -138,7 +138,7 @@ net::awaitable<void> BybitImpl::read_stream_message() {
             double ask_price = -1;
             double ask_qty = -1;
 
-            for (auto pair : *this->order_book_ask[symbol_name]) {
+            for (const auto& pair : *this->order_book_ask[symbol_name]) {
                 double temp_first = std::stod(pair.first);
                 double temp_second = std::stod(pair.second);
                 if (ask_price == -1 || temp_first < ask_price) {
@@ -146,7 +146,7 @@ net::awaitable<void> BybitImpl::read_stream_message() {
                     ask_qty = temp_second;
                 }
             }
-            for (auto pair : *this->order_book_bid[symbol_name]) {
+            for (const auto& pair : *this->order_book_bid[symbol_name]) {
                 double temp_first = std::stod(pair.first);
                 double temp_second = std::stod(pair.second);
                 if (bid_price == -1 || temp_first > bid_price) {
