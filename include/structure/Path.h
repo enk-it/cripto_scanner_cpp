@@ -13,7 +13,7 @@ using std::move;
 struct PathNode;
 
 struct Path {
-    double financial_result; // здесь хранить логарифм
+    double financial_result = 0; // здесь хранить логарифм
     vector<PathNode*> path;
     bool initialized = false;
 
@@ -21,7 +21,7 @@ struct Path {
     Path(
         const double fr,
         vector<PathNode*> p
-        ) : financial_result(fr), path(p) {}
+        ) : financial_result(fr), path(std::move(p)) {}
 };
 
 
