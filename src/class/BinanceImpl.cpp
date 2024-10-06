@@ -79,10 +79,6 @@ net::awaitable<void> BinanceImpl::read_api_message() {
             symbol_->symbol = sym;
             symbol_->base = baseAsset;
             symbol_->quote = quoteAsset;
-            symbol_->bestAskPrice = 1;
-            symbol_->bestBidPrice = 1;
-            symbol_->bestBidQty = 1;
-            symbol_->bestAskQty = 1;
             symbol_->criptostock = this;
             this->scanner->add_symbol(symbol_, this->stockmarket_name + sym);
             this->symbols_names.push_back(sym);
