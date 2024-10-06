@@ -48,8 +48,8 @@ void BybitImpl::get_symbols_info() {
             symbol_->criptostock = this;
             this->scanner->add_symbol(symbol_, this->stockmarket_name + sym);
             this->symbols_names.push_back(sym);
-            this->order_book_bid[sym] = new unordered_map<double, double>;
-            this->order_book_ask[sym] = new unordered_map<double, double>;
+            this->order_book_bid[sym] = new unordered_map<std::string, std::string>;
+            this->order_book_ask[sym] = new unordered_map<std::string, std::string>;
         }
     }
 }
@@ -103,20 +103,20 @@ net::awaitable<void> BybitImpl::read_stream_message() {
                 this->order_book_bid[symbol_name]->clear();
                 this->order_book_ask[symbol_name]->clear();
 
-                double bid_price = std::stod(bids[0][0]);
-                double bid_qty = std::stod(bids[0][1]);
-                double ask_price = std::stod(asks[0][0]);
-                double ask_qty = std::stod(asks[0][1]);
+                std::string bid_price = bids[0][0];
+                std::string bid_qty = bids[0][1];
+                std::string ask_price = asks[0][0];
+                std::string ask_qty = asks[0][1];
 
                 (*this->order_book_bid[symbol_name])[bid_price] = bid_qty;
                 (*this->order_book_ask[symbol_name])[ask_price] = ask_qty;
             }
             else {
                 if (asks.size() == 1) {
-                    double ask_price = std::stod(asks[0][0]);
-                    double ask_qty = std::stod(asks[0][1]);
+                    std::string ask_price = asks[0][0];
+                    std::string ask_qty = asks[0][1];
 
-                    if (ask_qty == 0) {
+                    if (ask_qty == "0") {
                         this->order_book_ask[symbol_name]->erase(ask_price);
                     }
                     else {
@@ -124,10 +124,10 @@ net::awaitable<void> BybitImpl::read_stream_message() {
                     }
                 }
                 if (bids.size() == 1) {
-                    double bid_price = std::stod(bids[0][0]);
-                    double bid_qty = std::stod(bids[0][1]);
+                    std::string bid_price = bids[0][0];
+                    std::string bid_qty = bids[0][1];
 
-                    if (bid_qty == 0) {
+                    if (bid_qty == "0") {
                         this->order_book_bid[symbol_name]->erase(bid_price);
                     }
                     else {
@@ -143,15 +143,19 @@ net::awaitable<void> BybitImpl::read_stream_message() {
             double ask_qty = -1;
 
             for (auto pair : *this->order_book_ask[symbol_name]) {
-                if (ask_price == -1 || pair.first < ask_price) {
-                    ask_price = pair.first;
-                    ask_qty = pair.second;
+                double temp_first = std::stod(pair.first);
+                double temp_second = std::stod(pair.second);
+                if (ask_price == -1 || temp_first < ask_price) {
+                    ask_price = temp_first;
+                    ask_qty = temp_second;
                 }
             }
             for (auto pair : *this->order_book_bid[symbol_name]) {
-                if (bid_price == -1 || pair.first > bid_price) {
-                    bid_price = pair.first;
-                    bid_qty = pair.second;
+                double temp_first = std::stod(pair.first);
+                double temp_second = std::stod(pair.second);
+                if (bid_price == -1 || temp_first > bid_price) {
+                    bid_price = temp_first;
+                    bid_qty = temp_second;
                 }
             }
             this->on_update(

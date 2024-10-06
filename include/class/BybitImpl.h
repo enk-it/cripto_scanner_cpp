@@ -35,8 +35,8 @@ protected:
 
     net::awaitable<void> init_stream_ws();
 
-    unordered_map<string, unordered_map<double, double>*> order_book_bid;
-    unordered_map<string, unordered_map<double, double>*> order_book_ask;
+    unordered_map<string, unordered_map<string, string>*> order_book_bid;
+    unordered_map<string, unordered_map<string, string>*> order_book_ask;
 
 
 public:
