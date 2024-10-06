@@ -10,5 +10,6 @@ Symbol::Symbol() {
     bestAskPrice = 0.0;
     bestBidQty = 0.0;
     bestAskQty = 0.0;
+    lud = 0;
     criptostock = nullptr;
 }
