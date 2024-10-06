@@ -96,7 +96,7 @@ void Scanner::scan_for_best_fr() {
             }
         }
 
-        if (this->paths[i]->financial_result > 1 && count < 10/*|| i < 10*/) {
+        if (this->paths[i]->financial_result > 1 || count < 10) {
             for (int j = 0; j < this->paths[i]->path.size(); j++) {
                 std::cout << this->paths[i]->path[j]->symbol->criptostock->stockmarket_name << this->paths[i]->path[j]->symbol->symbol << " ";
             }
