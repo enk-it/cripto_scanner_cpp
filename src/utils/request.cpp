@@ -38,7 +38,7 @@ std::string binance_exchange_request() {
 std::string bybit_subscribe_request(std::vector<std::string> symbols) {
     nlohmann::json request;
 
-    for (int i = 0; i< symbols.size(); i++) {
+    for (int i = 0; i < symbols.size(); i++) {
         std::string symbol = symbols[i];
         symbols[i] = "orderbook.1." + symbol;
     }
