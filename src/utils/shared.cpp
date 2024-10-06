@@ -28,8 +28,8 @@ std::string get_uuid() {
 }
 
 double count_fr(int n, double comission_k) {
-    // return log10(comission_k) * n;
-    return pow(comission_k, n);
+    return log10(comission_k) * n;
+    // return pow(comission_k, n);
 }
 
 

@@ -35,20 +35,17 @@ void Scanner::update_symbol(
 
     this->_reduce_influence(ticker);
 
-    // this->symbols[ticker]->bestAskQty = best_ask_qty;
-    // this->symbols[ticker]->bestAskPrice = log10(best_ask_price);
-    // this->symbols[ticker]->bestBidQty = best_bid_qty;
-    // this->symbols[ticker]->bestBidPrice = log10(best_bid_price);
-
     if (best_ask_price != -1) {
         this->symbols[ticker]->bestAskQty = best_ask_qty;
-        this->symbols[ticker]->bestAskPrice = best_ask_price;
+        this->symbols[ticker]->bestAskPrice = log10(best_ask_price);
+        // this->symbols[ticker]->bestAskPrice = best_ask_price;
         this->symbols[ticker]->initialized_ask = true;
 
     }
     if (best_bid_price != -1) {
         this->symbols[ticker]->bestBidQty = best_bid_qty;
-        this->symbols[ticker]->bestBidPrice = best_bid_price;
+        this->symbols[ticker]->bestBidPrice = log10(best_bid_price);
+        // this->symbols[ticker]->bestBidPrice = best_bid_price;
         this->symbols[ticker]->initialized_bid = true;
 
     }
@@ -63,7 +60,7 @@ void Scanner::update_symbol(
 
     system("clear");
     std::cout << std::time(nullptr) << std::endl;
-    this->print_symbols_details();
+    // this->print_symbols_details();
     std::cout << this->paths.size() << " " << this->initialized_paths << std::endl;
     this->scan_for_best_fr();
 }
@@ -96,7 +93,7 @@ void Scanner::scan_for_best_fr() {
             }
         }
 
-        if (this->paths[i]->financial_result > 1 || count < 10) {
+        if (this->paths[i]->financial_result > 0 /*|| count < 10*/) {
             for (int j = 0; j < this->paths[i]->path.size(); j++) {
                 std::cout << this->paths[i]->path[j]->symbol->criptostock->stockmarket_name << this->paths[i]->path[j]->symbol->symbol << " ";
             }
@@ -174,7 +171,7 @@ void Scanner::print_symbols_details() {
         std::cout << fst << " ";
         std::cout << std::format("{}", snd->bestAskPrice) << " ";
         std::cout << std::format("{}", snd->bestBidPrice) << " ";
-        std::cout << snd->lud << " ";
+        // std::cout << snd->lud << " ";
         std::cout << snd->initialized;
         std::cout << std::endl;
     }
@@ -201,10 +198,10 @@ void Scanner::_reduce_influence(const string& symbol) {
 
     for (int i =0; i < current_symbol->participates.size(); i++) {
         if (current_symbol->participates[i]->is_reversed) {
-            current_symbol->participates[i]->path->financial_result *= current_symbol->bestAskPrice; // возможно поменять местами с 187
+            current_symbol->participates[i]->path->financial_result += current_symbol->bestAskPrice; // возможно поменять местами с 187
         }
         else {
-            current_symbol->participates[i]->path->financial_result /= current_symbol->bestBidPrice;
+            current_symbol->participates[i]->path->financial_result -= current_symbol->bestBidPrice;
         }
     }
 }
@@ -213,10 +210,10 @@ void Scanner::_increase_influence(const string& symbol) {
     Symbol* current_symbol = this->symbols[symbol];
     for (int i = 0; i < current_symbol->participates.size(); i++) {
         if (current_symbol->participates[i]->is_reversed) {
-            current_symbol->participates[i]->path->financial_result /= current_symbol->bestAskPrice; // возможно поменять местами с 199
+            current_symbol->participates[i]->path->financial_result -= current_symbol->bestAskPrice; // возможно поменять местами с 199
         }
         else {
-            current_symbol->participates[i]->path->financial_result *= current_symbol->bestBidPrice;
+            current_symbol->participates[i]->path->financial_result += current_symbol->bestBidPrice;
         }
     }
 }
