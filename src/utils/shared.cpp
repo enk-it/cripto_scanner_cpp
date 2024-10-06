@@ -32,6 +32,10 @@ double count_fr(int n, double comission_k) {
     // return pow(comission_k, n);
 }
 
+double show_log_10(double n) {
+    return pow(10, n);
+}
+
 
 std::vector<PathNode*>* deep_copy(std::vector<PathNode *> *nodes) {
     std::vector<PathNode *>* result = new std::vector<PathNode *>({});

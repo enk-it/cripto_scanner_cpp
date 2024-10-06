@@ -60,7 +60,7 @@ void Scanner::update_symbol(
 
     system("clear");
     std::cout << std::time(nullptr) << std::endl;
-    // this->print_symbols_details();
+    this->print_symbols_details();
     std::cout << this->paths.size() << " " << this->initialized_paths << std::endl;
     this->scan_for_best_fr();
 }
@@ -97,7 +97,7 @@ void Scanner::scan_for_best_fr() {
             for (int j = 0; j < this->paths[i]->path.size(); j++) {
                 std::cout << this->paths[i]->path[j]->symbol->criptostock->stockmarket_name << this->paths[i]->path[j]->symbol->symbol << " ";
             }
-            std::cout << this->paths[i]->financial_result << std::endl;
+            std::cout << show_log_10(this->paths[i]->financial_result) << std::endl;
             count += 1;
         }
     }
@@ -169,8 +169,8 @@ void Scanner::_generate_paths(
 void Scanner::print_symbols_details() {
     for (const auto &[fst, snd]: this->symbols) {
         std::cout << fst << " ";
-        std::cout << std::format("{}", snd->bestAskPrice) << " ";
-        std::cout << std::format("{}", snd->bestBidPrice) << " ";
+        std::cout << std::format("{}", show_log_10(snd->bestAskPrice)) << " ";
+        std::cout << std::format("{}", show_log_10(snd->bestBidPrice)) << " ";
         // std::cout << snd->lud << " ";
         std::cout << snd->initialized;
         std::cout << std::endl;

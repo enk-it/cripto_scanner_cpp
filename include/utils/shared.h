@@ -27,6 +27,8 @@ std::string get_uuid();
 
 double count_fr(int n, double comission_k = 0.999);
 
+double show_log_10(double n);
+
 std::vector<PathNode *>* deep_copy(std::vector<PathNode *> *nodes);
 
 net::awaitable<void> send_message(std::string message, websocket::stream<beast::ssl_stream<beast::tcp_stream> > &ws);
