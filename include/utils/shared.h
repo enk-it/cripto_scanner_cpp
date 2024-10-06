@@ -30,11 +30,11 @@ net::awaitable<void> send_message(std::string message, websocket::stream<beast::
 
 
 net::awaitable<void> connect_websocket(
-        std::string host,
-        std::string port,
-        std::string target,
-        websocket::stream<beast::ssl_stream<beast::tcp_stream> > **ws,
-        ssl::context **ctx
+        const std::string& host,
+        const std::string& port,
+        const std::string& target,
+        websocket::stream<beast::ssl_stream<beast::tcp_stream> >* &ws,
+        ssl::context *ctx
     );
 
 std::string httpsGet(const std::string& host, const std::string& path, ssl::context *ctx);

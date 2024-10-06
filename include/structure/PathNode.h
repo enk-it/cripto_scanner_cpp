@@ -13,7 +13,7 @@ struct PathNode {
     bool is_reversed;
     Path* path;
     PathNode() = default;
-    PathNode(Symbol* s, bool ir) :
+    PathNode(Symbol* s, const bool ir) :
     symbol(s),
     is_reversed(ir),
     path(nullptr)

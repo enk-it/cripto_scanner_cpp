@@ -19,7 +19,7 @@ struct Path {
 
     Path() = default;
     Path(
-        double fr,
+        const double fr,
         vector<PathNode*> p
         ) : financial_result(fr), path(p) {}
 };
