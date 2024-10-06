@@ -1,18 +1,11 @@
-//
-// Created by silencer on 17.09.24.
-//
-
-#include "../../include/class/Scanner.h"
-
 #include <cmath>
 #include <format>
-
+#include <iostream>
+#include "../../include/class/Scanner.h"
 #include "../../include/class/BaseCriptoStock.h"
 #include "../../include/structure/Path.h"
 #include "../../include/structure/PathNode.h"
 #include "../../include/utils/shared.h"
-
-#include <iostream>
 
 
 Scanner::Scanner() : maxlen() {

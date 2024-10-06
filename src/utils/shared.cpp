@@ -1,21 +1,16 @@
-//
-// Created by silencer on 29.09.24.
-//
-
-#include "../../include/utils/shared.h"
-#include "../../include/structure/PathNode.h"
-
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/uuid_generators.hpp>
-#include <boost/uuid/uuid_io.hpp>         // streaming operators etc.
-
-#include <boost/beast/core.hpp>
-#include <boost/beast/http.hpp>
-#include <boost/beast/version.hpp>
-#include <boost/asio/ip/tcp.hpp>
 #include <cstdlib>
 #include <iostream>
 #include <string>
+#include <boost/asio/ip/tcp.hpp>
+#include <boost/beast/core.hpp>
+#include <boost/beast/http.hpp>
+#include <boost/beast/version.hpp>
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_generators.hpp>
+#include <boost/uuid/uuid_io.hpp>         // streaming operators etc.
+#include "../../include/structure/PathNode.h"
+#include "../../include/utils/shared.h"
+
 
 
 

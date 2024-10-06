@@ -1,25 +1,18 @@
-//
-// Created by silencer on 17.09.24.
-//
-
 #pragma once
 
-
-#include <unordered_map>
-#include <utility>
-#include <vector>
 #include <string>
-#include <unordered_set>
+#include <unordered_map>
+#include <vector>
+#include <boost/asio/co_spawn.hpp>
+#include "../structure/Path.h"
+#include "../structure/Symbol.h"
 
 using std::string;
 using std::vector;
 using std::unordered_map;
 
 
-#include "../structure/Path.h"
-#include "../structure/Symbol.h"
 
-#include <boost/asio/co_spawn.hpp>
 
 
 class Scanner {

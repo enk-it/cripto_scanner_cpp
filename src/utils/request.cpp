@@ -1,13 +1,8 @@
-//
-// Created by silencer on 01.10.24.
-//
-
-#include "../../include/utils/request.h"
-#include "../../include/utils/shared.h"
-
 #include <iostream>
 #include <nlohmann/json.hpp>
 #include <nlohmann/json_fwd.hpp>
+#include "../../include/utils/request.h"
+#include "../../include/utils/shared.h"
 
 
 std::string binance_subscribe_request(std::vector<std::string> symbols) {

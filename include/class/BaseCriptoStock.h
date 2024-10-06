@@ -1,17 +1,9 @@
-//
-// Created by silencer on 27.09.24.
-//
-
 #pragma once
-
-#include "../../include/structure/Symbol.h"
-#include "../../include/class/Scanner.h"
-
 
 #include <string>
 #include <unordered_map>
-#include <utility>
 #include <vector>
+#include "../../include/class/Scanner.h"
 
 
 using std::unordered_map;

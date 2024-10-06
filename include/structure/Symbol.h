@@ -1,11 +1,6 @@
-//
-// Created by silencer on 16.09.24.
-//
-
 #pragma once
 
 #include <string>
-#include <unordered_set>
 #include <vector>
 
 class BaseCriptoStock;

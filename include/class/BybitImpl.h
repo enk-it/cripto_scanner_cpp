@@ -1,19 +1,11 @@
-//
-// Created by silencer on 19.09.24.
-//
-
 #pragma once
-#include "../../include/class/BaseCriptoStock.h"
 
 #include <boost/asio/awaitable.hpp>
-#include <boost/asio/co_spawn.hpp>
-#include <boost/asio/io_context.hpp>
 #include <boost/asio/ssl.hpp>
 #include <boost/beast/core.hpp>
 #include <boost/beast/ssl.hpp>
 #include <boost/beast/websocket.hpp>
-#include <boost/beast/websocket/ssl.hpp>
-#include <boost/asio.hpp>
+#include "../../include/class/BaseCriptoStock.h"
 
 namespace beast = boost::beast;
 namespace http = beast::http;

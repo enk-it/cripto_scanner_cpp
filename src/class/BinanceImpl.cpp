@@ -1,7 +1,3 @@
-//
-// Created by silencer on 19.09.24.
-//
-
 #include "../../include/class/BinanceImpl.h"
 #include "../../include/utils/request.h"
 #include "../../include/utils/shared.h"

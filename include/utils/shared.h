@@ -1,17 +1,12 @@
-//
-// Created by silencer on 29.09.24.
-//
-
 #pragma once
 
-
+#include <string>
+#include <vector>
 #include <boost/asio/awaitable.hpp>
 #include <boost/asio/ssl.hpp>
 #include <boost/beast/core.hpp>
 #include <boost/beast/ssl.hpp>
 #include <boost/beast/websocket.hpp>
-#include <string>
-#include <vector>
 
 namespace beast = boost::beast;
 namespace http = beast::http;

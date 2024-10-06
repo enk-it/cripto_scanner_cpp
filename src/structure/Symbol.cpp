@@ -1,7 +1,3 @@
-//
-// Created by steqa on 29/09/24.
-//
-
 #include "../../include/structure/Symbol.h"
 
 

@@ -1,11 +1,6 @@
-//
-// Created by silencer on 05.10.24.
-//
-
 #include "../../include/class/BybitImpl.h"
 #include "../../include/utils/request.h"
 #include "../../include/utils/shared.h"
-// #include <cpr/cpr.h>
 
 #include <iostream>
 #include <nlohmann/json.hpp>
