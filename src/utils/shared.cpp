@@ -12,9 +12,6 @@
 #include "../../include/utils/shared.h"
 
 
-
-
-
 struct PathNode;
 
 std::string get_uuid() {
